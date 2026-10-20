@@ -1,0 +1,804 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Comment fonctionne un ordinateur</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+/* Concept : fiche technique 404 CyberFound. Une colonne de lecture, un sommaire collant à gauche, des schémas construits en blocs, des encadrés "Côté cyber" qui relient chaque notion à la sécurité. */
+:root{
+  --bg:#070B0A;--surface:#0D1411;--surface-2:#111A16;--line:#1E2B25;--line-strong:#2E4037;
+  --fg:#E8EEEA;--fg-soft:#B9C5BE;--fg-mute:#8D9993;
+  --accent:#9BF03C;--accent-tint:rgba(155,240,60,.09);--accent-line:rgba(155,240,60,.42);
+  --amber:#F2B84B;--amber-tint:rgba(242,184,75,.09);--amber-line:rgba(242,184,75,.4);
+  --code:#050807;
+  --display:'Chakra Petch',system-ui,sans-serif;
+  --body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--bg);background-image:linear-gradient(rgba(155,240,60,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(155,240,60,.035) 1px,transparent 1px);background-size:56px 56px;color:var(--fg);font:400 16px/1.7 var(--body);-webkit-text-size-adjust:100%}
+a{color:var(--accent);text-underline-offset:3px}
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+h1,h2,h3{text-wrap:balance;margin:0}
+p{margin:0 0 14px;max-width:68ch}
+ul,ol{margin:0 0 14px;padding-left:22px;max-width:68ch}
+li{margin-bottom:6px}
+code{font-family:var(--mono);font-size:.9em;background:var(--surface-2);border:1px solid var(--line);padding:1px 6px;border-radius:2px;color:#D6E2DA;overflow-wrap:anywhere}
+strong{font-weight:600;color:var(--fg)}
+.skip{position:absolute;left:-9999px;top:0;background:var(--accent);color:#07110A;padding:8px 14px;z-index:50}
+.skip:focus{left:16px;top:8px}
+.wrap{max-width:1140px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* Barre du haut */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:rgba(7,11,10,.94);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px}
+.brand{display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:700;letter-spacing:.08em;font-size:15px;color:var(--fg);text-decoration:none}
+.brand img{width:34px;height:34px;border-radius:50%;display:block}
+.brand span{color:var(--accent)}
+.bar-meta{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--fg-mute);text-transform:uppercase;text-align:right}
+.progress{height:2px;background:var(--line)}
+.progress i{display:block;height:100%;background:var(--accent);transform-origin:left;transform:scaleX(0)}
+
+/* Hero */
+.hero{position:relative;margin:40px 0 8px;padding:44px clamp(20px,4vw,48px) 40px}
+.hero::before,.hero::after{content:"";position:absolute;width:34px;height:34px;border:3px solid var(--accent)}
+.hero::before{left:0;top:0;border-right:0;border-bottom:0}
+.hero::after{right:0;bottom:0;border-left:0;border-top:0}
+.prompt{font-family:var(--mono);font-size:14px;color:var(--accent);letter-spacing:.04em;margin:0 0 22px}
+.cur{display:inline-block;width:9px;height:1.05em;background:var(--accent);vertical-align:-3px;margin-left:4px;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-mute);margin:0 0 14px}
+h1{font:700 clamp(34px,7vw,66px)/1.04 var(--display);text-transform:uppercase;letter-spacing:-.01em;margin:0 0 22px}
+h1 em{font-style:normal;color:var(--accent)}
+.lead{font-size:clamp(17px,2.2vw,20px);line-height:1.6;color:var(--fg-soft);max-width:60ch;margin:0 0 28px}
+.brief{border:1px solid var(--line-strong);background:var(--surface);padding:18px 20px 8px;max-width:760px}
+.brief h2{font:600 13px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 12px}
+.brief ul{padding-left:20px;margin:0}
+.brief li{color:var(--fg-soft)}
+
+/* Mise en page */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;padding-block:24px 8px}
+@media (min-width:1000px){.layout{grid-template-columns:250px minmax(0,1fr);gap:48px}}
+.toc{align-self:start}
+@media (min-width:1000px){.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px);max-height:calc(100vh - 100px);overflow:auto}}
+.toc details{border:1px solid var(--line);background:var(--surface)}
+.toc summary{cursor:pointer;padding:12px 16px;font:600 13px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);list-style:none}
+.toc summary::-webkit-details-marker{display:none}
+.toc ol{list-style:none;margin:0;padding:4px 8px 12px;max-width:none}
+.toc li{margin:0}
+.toc a{display:flex;gap:10px;padding:7px 10px;color:var(--fg-soft);text-decoration:none;font-size:14.5px;line-height:1.35;border-left:2px solid transparent}
+.toc a b{font:500 12px/1.6 var(--mono);color:var(--fg-mute);min-width:22px}
+.toc a:hover{color:var(--fg)}
+.toc a.on{color:var(--fg);border-left-color:var(--accent);background:var(--accent-tint)}
+.toc a.on b{color:var(--accent)}
+.doc{min-width:0;max-width:780px}
+
+/* Sections */
+.sec{margin-top:64px;scroll-margin-top:76px}
+.sec:first-child{margin-top:0}
+.sh{display:flex;align-items:center;gap:16px;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.num{font:700 14px/1 var(--mono);color:var(--bg);background:var(--accent);padding:7px 9px;border-radius:2px;letter-spacing:.04em}
+.sh h2{font:700 clamp(24px,3.6vw,32px)/1.12 var(--display);text-transform:uppercase;letter-spacing:.015em}
+h3{font:600 19px/1.25 var(--display);margin:30px 0 10px;letter-spacing:.01em}
+
+/* Encadrés */
+.note{border:1px solid var(--accent-line);background:var(--accent-tint);padding:16px 18px 6px;margin:22px 0;border-radius:2px}
+.note .tag{display:block;font:700 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.note p{max-width:none;color:var(--fg-soft)}
+.note.warn{border-color:var(--amber-line);background:var(--amber-tint)}
+.note.warn .tag{color:var(--amber)}
+
+/* Cartes */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin:20px 0}
+.card{background:var(--surface);border:1px solid var(--line);padding:18px 18px 12px;border-radius:2px;min-width:0}
+.card h3{margin:0 0 8px;font-size:18px;text-transform:uppercase;letter-spacing:.03em}
+.card p{font-size:15px;line-height:1.6;color:var(--fg-soft);margin-bottom:10px}
+.card .k{display:block;font:500 11.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--fg-mute);margin:12px 0 4px}
+.card .k.c{color:var(--accent)}
+
+/* Schémas */
+figure{margin:26px 0}
+figcaption{font-size:13.5px;color:var(--fg-mute);margin-top:10px;max-width:68ch}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px}
+.fl-step{flex:1 1 170px;background:var(--surface);border:1px solid var(--line);padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.fl-step.hot{border-color:var(--accent-line);background:var(--accent-tint)}
+.fl-step b{font:700 18px/1.2 var(--display);text-transform:uppercase;letter-spacing:.03em}
+.fl-step span{color:var(--fg-soft);font-size:14px;line-height:1.5}
+.fl-arrow{align-self:center;color:var(--accent);font:700 20px/1 var(--mono)}
+.fl-under{flex:1 1 100%;border:1px dashed var(--line-strong);padding:10px 14px;color:var(--fg-soft);font-size:14px}
+@media (max-width:640px){.flow{flex-direction:column}.fl-arrow{transform:rotate(90deg)}}
+
+.hier{display:grid;gap:8px}
+.hr{display:grid;grid-template-columns:130px minmax(0,1fr) 210px;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);padding:10px 14px}
+.hn{font:600 14px/1.3 var(--display);text-transform:uppercase;letter-spacing:.04em}
+.hb{height:14px;background:var(--line);border-radius:1px;overflow:hidden}
+.hb i{display:block;height:100%;width:var(--w);background:var(--accent);opacity:var(--o)}
+.hl{font:500 12.5px/1.45 var(--mono);color:var(--fg-soft)}
+.hl span{display:block;color:var(--fg-mute)}
+@media (max-width:700px){.hr{grid-template-columns:minmax(0,1fr);gap:6px}}
+
+.cycle{list-style:none;padding:0;margin:20px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:10px;counter-reset:c;max-width:none}
+.cycle li{counter-increment:c;background:var(--surface);border:1px solid var(--line);padding:14px 16px;margin:0;font-size:14.5px;line-height:1.55;color:var(--fg-soft)}
+.cycle li::before{content:counter(c);display:inline-block;font:700 13px/1 var(--mono);color:var(--bg);background:var(--accent);padding:4px 7px;margin-bottom:8px;border-radius:2px}
+.cycle b{display:block;font:700 16px/1.2 var(--display);text-transform:uppercase;color:var(--fg);margin-bottom:4px}
+
+.layers{display:grid;gap:8px}
+.zone{border:1px solid var(--line-strong);padding:12px;display:grid;gap:8px}
+.zone.user{border-style:dashed}
+.zone.kernel{border-color:var(--accent-line);background:var(--accent-tint)}
+.zl{font:600 11.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--fg-mute)}
+.zone.kernel .zl{color:var(--accent)}
+.lyr{background:var(--surface);border:1px solid var(--line);padding:10px 14px;font:600 15px/1.3 var(--display);text-transform:uppercase;letter-spacing:.03em}
+.lyr small{display:block;font:400 13px/1.45 var(--body);text-transform:none;letter-spacing:0;color:var(--fg-mute);margin-top:2px}
+.gate{text-align:center;font:500 12.5px/1.4 var(--mono);color:var(--accent);padding:2px 0;overflow-wrap:anywhere}
+
+.mem{display:grid;gap:0;max-width:560px}
+.axis{font:500 11.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--fg-mute);padding:6px 0}
+.seg{border:1px solid var(--line-strong);padding:12px 14px;display:flex;flex-direction:column;gap:2px;margin-top:-1px}
+.seg b{font:700 15px/1.3 var(--display);text-transform:uppercase;letter-spacing:.03em}
+.seg span{font-size:13.5px;color:var(--fg-soft);line-height:1.5}
+.seg.stack{background:var(--accent-tint);border-color:var(--accent-line)}
+.seg.heap{background:var(--accent-tint);border-color:var(--accent-line)}
+.seg.gap{border-style:dashed;background:transparent;padding-block:18px}
+.seg.code{background:var(--surface-2)}
+.seg.data{background:var(--surface)}
+
+.boot{list-style:none;padding:0;margin:20px 0;counter-reset:b;max-width:none}
+.boot li{counter-increment:b;display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;margin:0;padding:0 0 0 0;position:relative}
+.boot li::before{content:counter(b);grid-row:1;grid-column:1;align-self:start;justify-self:center;font:700 14px/1 var(--mono);color:var(--bg);background:var(--accent);width:32px;height:32px;display:grid;place-items:center;border-radius:2px;z-index:1}
+.boot li::after{content:"";position:absolute;left:15.5px;top:32px;bottom:0;width:1px;background:var(--line-strong)}
+.boot li:last-child::after{display:none}
+.boot .bd{padding:0 0 22px;min-width:0}
+.boot b{display:block;font:700 17px/1.3 var(--display);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px}
+.boot p{margin:0 0 6px;font-size:15px;line-height:1.6;color:var(--fg-soft)}
+.pill{display:inline-block;font:500 11.5px/1 var(--mono);letter-spacing:.04em;border:1px solid var(--line-strong);color:var(--fg-soft);padding:4px 7px;margin:2px 6px 2px 0;border-radius:2px}
+
+/* Tableaux et code */
+.tw{overflow-x:auto;border:1px solid var(--line);margin:20px 0;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14.5px;line-height:1.55}
+th{font:600 11.5px/1.3 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);text-align:left;padding:12px 14px;border-bottom:1px solid var(--line-strong);background:var(--surface-2);white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--fg-soft)}
+tr:last-child td{border-bottom:0}
+td:first-child{color:var(--fg);font-weight:500}
+.cb{margin:14px 0;border:1px solid var(--line);background:var(--code)}
+.cb-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 8px 6px 14px;border-bottom:1px solid var(--line);font:500 11.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--fg-mute)}
+.copy{font:500 12px/1 var(--mono);letter-spacing:.06em;color:var(--accent);background:transparent;border:1px solid var(--accent-line);padding:7px 11px;cursor:pointer;border-radius:2px;min-height:32px}
+.copy:hover{background:var(--accent-tint)}
+pre{margin:0;padding:14px 16px;overflow-x:auto;font:13.5px/1.65 var(--mono);color:#D6E2DA}
+pre code{background:none;border:0;padding:0;font-size:inherit;overflow-wrap:normal}
+
+/* Exercices */
+.ex{border:1px solid var(--line-strong);background:var(--surface);padding:20px 20px 6px;margin:22px 0;border-radius:2px}
+.ex-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin-bottom:10px}
+.ex-h b{font:700 12.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.ex-h h3{margin:0;font-size:19px}
+.ex .q{color:var(--fg)}
+details.sol{border-top:1px solid var(--line);margin:16px -20px 0;padding:0 20px}
+details.sol summary{cursor:pointer;padding:14px 0;font:600 12.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+details.sol div{padding-bottom:10px}
+details.sol p{color:var(--fg-soft)}
+
+/* Checklist */
+.chk{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);background:var(--surface);margin-bottom:8px;cursor:pointer;color:var(--fg-soft);line-height:1.5;border-radius:2px}
+.chk:hover{border-color:var(--line-strong)}
+.chk input{width:20px;height:20px;margin:1px 0 0;flex:none;accent-color:var(--accent);cursor:pointer}
+.chk span{min-width:0}
+.score{display:flex;align-items:center;gap:14px;margin:18px 0 8px;font:600 13px/1 var(--mono);letter-spacing:.1em;color:var(--accent)}
+.score .tr{flex:1;height:6px;background:var(--line);max-width:340px}
+.score .tr i{display:block;height:100%;width:0;background:var(--accent)}
+
+/* Ressources et glossaire */
+.res{list-style:none;padding:0;max-width:none;display:grid;gap:8px}
+.res li{margin:0;padding:12px 14px;border:1px solid var(--line);background:var(--surface);color:var(--fg-soft);font-size:15px;line-height:1.55;border-radius:2px}
+.res b{color:var(--fg);font-weight:600}
+dl.gl{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:10px;margin:18px 0}
+dl.gl div{border:1px solid var(--line);background:var(--surface);padding:12px 14px;border-radius:2px;min-width:0}
+dl.gl dt{font:700 13px/1.3 var(--mono);color:var(--accent);margin-bottom:4px}
+dl.gl dd{margin:0;font-size:14.5px;line-height:1.55;color:var(--fg-soft)}
+
+/* Pied de page */
+.foot{margin-top:72px;border-top:1px solid var(--line);padding-block:32px 40px}
+.foot .wrap{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}
+.foot p{margin:0;font:500 12.5px/1.6 var(--mono);letter-spacing:.08em;color:var(--fg-mute);text-transform:uppercase;max-width:none}
+.foot b{color:var(--accent)}
+</style>
+
+<a class="skip" href="#main">Aller au contenu</a>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="data:image/png;base64,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" alt="" width="34" height="34"><div>404 <span>CYBERFOUND</span></div></a>
+    <div class="bar-meta">Fiche 0.1 · Niveau 0</div>
+  </div>
+  <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+</header>
+
+<div class="wrap" id="top">
+  <div class="hero">
+    <p class="prompt" aria-hidden="true">root@404:~$ ./comprendre --niveau 0<span class="cur"></span></p>
+    <p class="eyebrow">Fiche 0.1 · Les racines · Prérequis : aucun</p>
+    <h1>Comment fonctionne <em>un ordinateur</em></h1>
+    <p class="lead">Un ordinateur reçoit des données, les traite en suivant des instructions, puis les conserve ou les renvoie. Cette fiche explique chaque pièce de ce mécanisme, du processeur jusqu'au démarrage, et ce qu'il faut en retenir pour la cybersécurité. Les schémas sont volontairement simplifiés : les détails varient selon le système, l'architecture et le programme.</p>
+    <div class="brief">
+      <h2>En bref</h2>
+      <ul>
+        <li>Le processeur exécute des instructions. La mémoire vive contient le code et les données en cours d'utilisation. Le stockage conserve le reste.</li>
+        <li>Le système d'exploitation fait le lien entre les applications et le matériel, et cherche à isoler les programmes les uns des autres.</li>
+        <li>Un programme sur le disque devient un processus quand il s'exécute, avec son propre espace d'adressage virtuel.</li>
+        <li>Au démarrage, chaque étape charge ou vérifie la suivante : firmware, chargeur, noyau, services.</li>
+        <li>Chaque couche a ses attaques et ses défenses. Un signal isolé ne prouve rien : il se lit en contexte.</li>
+      </ul>
+    </div>
+    <div class="brief" style="margin-top:14px">
+      <h2>À la fin, tu sauras</h2>
+      <ul>
+        <li>distinguer un programme, un processus et un thread ;</li>
+        <li>expliquer le rôle du noyau et des appels système ;</li>
+        <li>repérer quelques surfaces d'attaque et les signaux qu'elles laissent.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="layout">
+    <nav class="toc" aria-label="Sommaire">
+      <details id="toc" open>
+        <summary>Sommaire</summary>
+        <ol>
+          <li><a href="#s1"><b>01</b>L'idée générale</a></li>
+          <li><a href="#s2"><b>02</b>Le matériel</a></li>
+          <li><a href="#s3"><b>03</b>Du code aux instructions</a></li>
+          <li><a href="#s4"><b>04</b>Le système d'exploitation</a></li>
+          <li><a href="#s5"><b>05</b>Processus et threads</a></li>
+          <li><a href="#s6"><b>06</b>La mémoire d'un processus</a></li>
+          <li><a href="#s7"><b>07</b>Fichiers et systèmes de fichiers</a></li>
+          <li><a href="#s8"><b>08</b>Le démarrage</a></li>
+          <li><a href="#s9"><b>09</b>La virtualisation</a></li>
+          <li><a href="#s10"><b>10</b>Le lien avec la cybersécurité</a></li>
+          <li><a href="#s11"><b>11</b>Exercices pratiques</a></li>
+          <li><a href="#s12"><b>12</b>Vérifier ses acquis</a></li>
+          <li><a href="#s13"><b>13</b>Pour aller plus loin</a></li>
+        </ol>
+      </details>
+    </nav>
+
+    <main class="doc" id="main">
+
+      <!-- 01 -->
+      <section class="sec" id="s1">
+        <div class="sh"><span class="num">01</span><h2>L'idée générale</h2></div>
+        <p>Un ordinateur reçoit des données, exécute des instructions, produit des résultats et peut conserver des informations. C'est un modèle simplifié, mais il aide à tout situer : un jeu vidéo, un navigateur, un antivirus ou un malware sont des programmes, donc des instructions exécutées par un processeur. Ce qu'ils font en détail diffère beaucoup.</p>
+        <figure>
+          <div class="flow" role="img" aria-label="Les entrées passent par le traitement, puis vers les sorties. Le stockage conserve les données entre deux allumages.">
+            <div class="fl-step"><b>Entrées</b><span>clavier, souris, réseau, fichiers lus</span></div>
+            <div class="fl-arrow" aria-hidden="true">→</div>
+            <div class="fl-step hot"><b>Traitement</b><span>processeur et mémoire vive</span></div>
+            <div class="fl-arrow" aria-hidden="true">→</div>
+            <div class="fl-step"><b>Sorties</b><span>écran, réseau, fichiers écrits</span></div>
+            <div class="fl-under"><strong>Stockage</strong> : lu et écrit à tout moment, il conserve les programmes et les données entre deux allumages.</div>
+          </div>
+          <figcaption>Modèle simplifié : les données circulent dans les deux sens, et un programme peut tourner sans nouvelle entrée. Dans le carrousel, les trois gestes sont : recevoir (entrées), traiter (traitement), garder ou montrer (stockage et sorties).</figcaption>
+        </figure>
+        <div class="note"><span class="tag">Fil rouge</span><p>Pour relier les notions, on suit un seul exemple tout au long de la fiche : tu tapes une adresse dans ton navigateur et la page s'affiche. À la section 10, on retrace ce trajet de bout en bout.</p></div>
+        <p>Dans le modèle de von Neumann, qui inspire la plupart des ordinateurs actuels, les instructions et les données peuvent être stockées dans la même mémoire principale. Cela ne signifie pas que n'importe quelle donnée peut être exécutée : le système et le processeur appliquent des règles d'accès. Certaines failles permettent toutefois de détourner le déroulement d'un programme, voire de faire exécuter du code dans certaines conditions.</p>
+      </section>
+
+      <!-- 02 -->
+      <section class="sec" id="s2">
+        <div class="sh"><span class="num">02</span><h2>Le matériel</h2></div>
+        <p>Six pièces suffisent pour comprendre le reste. Chacune a un rôle, une analogie et un lien avec la sécurité. Les analogies donnent un repère : c'est la définition technique qui fait foi.</p>
+        <div class="grid">
+          <article class="card">
+            <h3>Processeur (CPU)</h3>
+            <p>Exécute les instructions. Il se décrit par son nombre de cœurs, sa fréquence en GHz, son cache et son jeu d'instructions (x86-64 ou ARM). Chaque cœur exécute des instructions. Avec certaines technologies comme le SMT (parfois appelé Hyper-Threading), il peut gérer plusieurs fils d'exécution matériels. Il n'est pas le seul à calculer : le GPU et certains contrôleurs ont leurs propres circuits.</p>
+            <span class="k">Analogie</span><p>Le cuisinier qui exécute la recette.</p>
+            <span class="k c">Côté cyber</span><p>Les failles Spectre et Meltdown, publiées en 2018, ont montré qu'un processeur peut lui-même laisser fuiter des secrets.</p>
+          </article>
+          <article class="card">
+            <h3>Mémoire vive (RAM)</h3>
+            <p>Contient le code et les données utilisés par le système et par les programmes en cours. Elle est rapide mais volatile : elle se vide quand la machine s'éteint.</p>
+            <span class="k">Analogie</span><p>Le plan de travail, grand mais temporaire.</p>
+            <span class="k c">Côté cyber</span><p>Mots de passe, clés de chiffrement et certains malwares sans fichier s'y trouvent. Les enquêteurs capturent la mémoire avant d'éteindre une machine.</p>
+          </article>
+          <article class="card">
+            <h3>Stockage</h3>
+            <p>Conserve les données sans courant. Un SSD utilise de la mémoire flash, un disque dur des plateaux magnétiques. Il est plus lent que la RAM, mais bien plus grand.</p>
+            <span class="k">Analogie</span><p>Le garde-manger.</p>
+            <span class="k c">Côté cyber</span><p>Cible des ransomwares. Le chiffrement du disque protège les données si la machine est volée.</p>
+          </article>
+          <article class="card">
+            <h3>Carte mère</h3>
+            <p>Relie tous les composants par des bus et un chipset. Elle porte aussi le firmware (UEFI ou BIOS), stocké en mémoire non volatile : c'est le premier programme exécuté à l'allumage.</p>
+            <span class="k">Analogie</span><p>Les couloirs d'un bâtiment, qui relient les pièces entre elles. À ne pas confondre avec un réseau informatique.</p>
+            <span class="k c">Côté cyber</span><p>Le firmware s'exécute avant le système. Une compromission à ce niveau peut survivre à une réinstallation.</p>
+          </article>
+          <article class="card">
+            <h3>Carte réseau (NIC)</h3>
+            <p>Envoie et reçoit les trames par câble ou par Wi-Fi. Elle porte une adresse MAC. Le système d'exploitation la pilote et applique les protocoles comme TCP/IP. Le réseau est détaillé au niveau 3.</p>
+            <span class="k">Analogie</span><p>La porte d'entrée et de sortie : le courrier passe par elle, mais elle ne décide pas de son contenu.</p>
+            <span class="k c">Côté cyber</span><p>Par là passent les attaques à distance, les échanges d'un malware avec son serveur et les données volées.</p>
+          </article>
+          <article class="card">
+            <h3>GPU et périphériques</h3>
+            <p>Le GPU calcule en parallèle : images, mais aussi cassage de mots de passe et intelligence artificielle. Clavier, caméra et clés USB dialoguent avec le système par des pilotes.</p>
+            <span class="k">Analogie</span><p>Les ateliers spécialisés et les portes d'entrée.</p>
+            <span class="k c">Côté cyber</span><p>Une clé USB piégée peut se faire passer pour un clavier et taper des commandes toute seule.</p>
+          </article>
+        </div>
+
+        <div class="note"><span class="tag">À distinguer</span><p>Le <strong>processeur</strong> exécute. La <strong>RAM</strong> contient temporairement. Le <strong>stockage</strong> conserve. Le <strong>firmware</strong> démarre le tout. Quatre rôles, quatre composants.</p></div>
+        <h3>La hiérarchie de la mémoire</h3>
+        <p>En général, plus une mémoire est rapide, plus elle est petite et chère : c'est une tendance, pas une loi. L'ordinateur empile donc plusieurs niveaux : le processeur garde tout près de lui ce dont il se sert le plus.</p>
+        <figure>
+          <div class="hier" role="img" aria-label="Cinq niveaux de mémoire, des registres au disque dur, du plus rapide et petit au plus lent et grand.">
+            <div class="hr"><div class="hn">Registres</div><div class="hb"><i style="--w:6%;--o:1"></i></div><div class="hl">moins de 1 ns<span>quelques centaines d'octets</span></div></div>
+            <div class="hr"><div class="hn">Cache L1 à L3</div><div class="hb"><i style="--w:16%;--o:.85"></i></div><div class="hl">quelques ns<span>de quelques Ko à plusieurs Mo</span></div></div>
+            <div class="hr"><div class="hn">RAM</div><div class="hb"><i style="--w:38%;--o:.65"></i></div><div class="hl">environ 100 ns<span>quelques Go à centaines de Go</span></div></div>
+            <div class="hr"><div class="hn">SSD</div><div class="hb"><i style="--w:66%;--o:.45"></i></div><div class="hl">environ 100 µs<span>centaines de Go à plusieurs To</span></div></div>
+            <div class="hr"><div class="hn">Disque dur</div><div class="hb"><i style="--w:94%;--o:.3"></i></div><div class="hl">plusieurs ms<span>plusieurs To</span></div></div>
+          </div>
+          <figcaption>Ordres de grandeur d'un PC courant, pas à l'échelle. La longueur de la barre représente la capacité typique. Les registres, les caches et la RAM sont volatils, le SSD et le disque dur ne le sont pas.</figcaption>
+        </figure>
+      </section>
+
+      <!-- 03 -->
+      <section class="sec" id="s3">
+        <div class="sh"><span class="num">03</span><h2>Du code aux instructions</h2></div>
+        <p>Le processeur ne comprend que le code machine, une suite d'octets. Un programme écrit en Python, en C ou en PowerShell est compilé ou interprété jusqu'à devenir ces instructions. Voici une instruction simple vue de quatre façons.</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Représentation</th><th>Contenu</th></tr></thead>
+            <tbody>
+              <tr><td>Binaire</td><td><code>10000011 11000000 00000001</code></td></tr>
+              <tr><td>Hexadécimal</td><td><code>83 C0 01</code></td></tr>
+              <tr><td>Assembleur x86</td><td><code>add eax, 1</code></td></tr>
+              <tr><td>Signification</td><td>Ajouter 1 au registre <code>eax</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Le processeur exécute des instructions à très grande vitesse, en suivant des étapes comme celles-ci. Le détail réel est plus complexe : un processeur moderne en traite plusieurs à la fois.</p>
+        <ol class="cycle">
+          <li><b>Chercher</b>Lire l'instruction à l'adresse que désigne le compteur ordinal (RIP sur x86-64).</li>
+          <li><b>Décoder</b>Identifier l'opération demandée et les données concernées.</li>
+          <li><b>Exécuter</b>Calculer, copier, comparer, sauter ou appeler une fonction.</li>
+          <li><b>Écrire</b>Ranger le résultat dans un registre ou en mémoire, puis avancer.</li>
+        </ol>
+        <p>Les registres sont de petites cases à l'intérieur du processeur. Deux d'entre eux reviendront souvent : le compteur ordinal (RIP), qui désigne la prochaine instruction, et le pointeur de pile (RSP), qui désigne le sommet de la pile d'un programme.</p>
+        <div class="note"><span class="tag">Côté cyber</span><p>Un analyste de malwares lit ces instructions en assembleur avec un désassembleur. Un pentesteur qui exploite un programme cherche à faire pointer le compteur ordinal vers du code de son choix. Tu n'as pas besoin de lire de l'assembleur pour commencer, mais tu dois savoir qu'un programme finit toujours en instructions de ce genre.</p></div>
+      </section>
+
+      <!-- 04 -->
+      <section class="sec" id="s4">
+        <div class="sh"><span class="num">04</span><h2>Le système d'exploitation</h2></div>
+        <p>Le système d'exploitation (OS) fait le lien entre les applications et le matériel : il gère ce dernier pour tous les autres programmes. Il répartit le temps du processeur (l'ordonnancement), attribue la mémoire, organise les fichiers, contrôle qui a le droit de faire quoi et donne accès au réseau.</p>
+        <figure>
+          <div class="layers" role="img" aria-label="De haut en bas : applications, bibliothèques, appels système, noyau, pilotes, matériel.">
+            <div class="zone user">
+              <span class="zl">Espace utilisateur · anneau 3 sur x86 · droits limités</span>
+              <div class="lyr">Applications<small>navigateur, éditeur, scripts, malwares</small></div>
+              <div class="lyr">Bibliothèques<small>libc sur Linux, DLL Win32 sur Windows</small></div>
+            </div>
+            <div class="gate">▼ appels système : open, read, write, execve ▼</div>
+            <div class="zone kernel">
+              <span class="zl">Espace noyau · anneau 0 sur x86 · privilèges élevés</span>
+              <div class="lyr">Noyau<small>ordonnanceur, mémoire, fichiers, réseau, permissions</small></div>
+              <div class="lyr">Pilotes<small>disque, carte réseau, écran, USB (certains en espace utilisateur)</small></div>
+            </div>
+            <div class="lyr">Matériel<small>processeur, RAM, stockage, carte réseau</small></div>
+          </div>
+          <figcaption>Schéma simplifié. En général, un programme ne touche pas le matériel directement : il demande un service au noyau par un appel système, et les bibliothèques font une partie du travail sans lui.</figcaption>
+        </figure>
+        <ul>
+          <li><strong>Le noyau (kernel)</strong> est le cœur du système. Il tourne avec les privilèges les plus élevés.</li>
+          <li><strong>Les pilotes</strong> sont les modules qui savent parler à un matériel précis. Beaucoup s'exécutent dans le noyau, certains en espace utilisateur selon l'architecture.</li>
+          <li><strong>Les appels système</strong> sont la porte principale entre un programme et le noyau : ouvrir un fichier, créer un processus, envoyer des données sur le réseau.</li>
+          <li><strong>Les bibliothèques</strong> regroupent du code partagé qui emballe ces appels pour les rendre pratiques. Elles accomplissent aussi des tâches sans passer par le noyau.</li>
+        </ul>
+        <p>Sur x86, le processeur impose des niveaux de privilège : le noyau tourne en anneau 0 (privilèges élevés), les programmes en anneau 3 (droits limités). D'autres architectures utilisent d'autres noms, comme les niveaux EL0 à EL3 d'ARM. Un programme qui veut lire un disque ne le fait pas lui-même : il le demande au noyau, qui applique ses contrôles selon l'opération (droits sur le fichier, état du périphérique).</p>
+        <div class="note"><span class="tag">Confiance et privilèges</span><p>Les droits d'un processus déterminent ce qu'il peut lire, modifier ou exécuter. Un programme lancé par un utilisateur limité ne peut pas, en principe, modifier les fichiers du système. C'est pourquoi les attaquants cherchent à élever leurs privilèges. Comptes utilisateurs et permissions feront l'objet d'une fiche à part.</p></div>
+        <h3>Linux et Windows côte à côte</h3>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Sujet</th><th>Linux</th><th>Windows</th></tr></thead>
+            <tbody>
+              <tr><td>Noyau</td><td>Noyau Linux</td><td>NT (<code>ntoskrnl.exe</code>)</td></tr>
+              <tr><td>Premier processus</td><td><code>systemd</code> (PID 1 sur les systèmes qui l'utilisent)</td><td>Processus <code>System</code>, puis <code>smss.exe</code> et <code>wininit.exe</code></td></tr>
+              <tr><td>Passage vers le noyau</td><td>Appels système via la libc</td><td>API Win32, puis <code>ntdll.dll</code></td></tr>
+              <tr><td>Configuration</td><td>Fichiers texte dans <code>/etc</code></td><td>Registre et fichiers de configuration</td></tr>
+              <tr><td>Utilisateurs</td><td>UID, GID, <code>root</code> (UID 0)</td><td>SID, Administrateur, SYSTEM</td></tr>
+              <tr><td>Journaux</td><td><code>/var/log</code>, <code>journalctl</code></td><td>Observateur d'événements (.evtx)</td></tr>
+              <tr><td>Voir les processus</td><td><code>ps</code>, <code>top</code></td><td>Gestionnaire des tâches, <code>Get-Process</code></td></tr>
+              <tr><td>Services</td><td><code>systemctl</code></td><td><code>services.msc</code>, <code>Get-Service</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note"><span class="tag">Côté cyber</span><p>Un attaquant qui obtient un accès avec peu de droits cherche ensuite l'élévation de privilèges : passer à administrateur, ou jusqu'au noyau. Un rootkit noyau peut cacher ses propres processus et fichiers à tous les outils qui tournent au-dessus de lui.</p></div>
+      </section>
+
+      <!-- 05 -->
+      <section class="sec" id="s5">
+        <div class="sh"><span class="num">05</span><h2>Processus et threads</h2></div>
+        <p>Un <strong>programme</strong> est un ensemble d'instructions, souvent stocké dans un fichier exécutable sur le disque. Un <strong>processus</strong> est ce programme en train de s'exécuter. Il possède un identifiant (PID), son propre espace d'adressage virtuel (même si certaines ressources peuvent être partagées), ses fichiers ouverts et les droits de l'utilisateur qui l'a lancé. Un même programme peut donner plusieurs processus, par exemple plusieurs terminaux ouverts en même temps.</p>
+        <p>Un <strong>thread</strong> (fil d'exécution) est une suite d'instructions à l'intérieur d'un processus. Les threads d'un même processus partagent en général son espace mémoire et certaines ressources, mais chacun a sa propre pile et son propre contexte d'exécution. Ils permettent de faire plusieurs choses à la fois, mais aussi de se gêner.</p>
+        <h3>Parents et enfants</h3>
+        <p>Tout processus est créé par un autre, son parent, repéré par le PPID. Sur Linux, le parent se duplique (<code>fork</code>), puis le clone charge un autre programme (<code>exec</code>). Sur Windows, <code>CreateProcess</code> fait les deux. Le résultat est un arbre de processus.</p>
+        <p>Un processus passe par plusieurs états : prêt, en cours d'exécution, en attente (d'un disque ou du réseau), puis terminé. Un programme qui tourne en arrière-plan sans interface s'appelle un démon (daemon) sur Linux et un service sur Windows.</p>
+        <div class="note"><span class="tag">Côté cyber</span><p>La relation parent-enfant est un indice à contextualiser. Un explorateur de fichiers qui lance Word est normal. Un document Word (<code>winword.exe</code>) qui lance PowerShell mérite un examen, mais ce n'est pas une preuve : des outils légitimes le font parfois. Les journaux de création de processus (événement 4688 de Windows, événement 1 de Sysmon) permettent de reconstituer ces arbres.</p></div>
+        <h3>Réflexe d'analyste : examiner un processus</h3>
+        <p>Face à un processus qui intrigue, on regarde six éléments avant de conclure.</p>
+        <ol class="cycle">
+          <li><b>Nom</b>Est-il connu ? Une faute d'orthographe imitant un nom système est un signal.</li>
+          <li><b>Chemin</b>Où se trouve le fichier ? <code>svchost.exe</code> hors de <code>System32</code> est atypique.</li>
+          <li><b>Ligne de commande</b>Quels arguments ? Un script encodé ou très long mérite une lecture.</li>
+          <li><b>Parent</b>Qui l'a lancé ? Compare avec ce qui est habituel.</li>
+          <li><b>Utilisateur</b>Quel compte, quels droits ? SYSTEM ou un compte normal ?</li>
+          <li><b>Réseau</b>Quelles connexions sortantes, vers où ?</li>
+        </ol>
+        <p>Chaque indicateur se lit avec les autres : un seul élément étrange ne prouve pas une compromission, et un processus au nom banal peut être malveillant.</p>
+      </section>
+
+      <!-- 06 -->
+      <section class="sec" id="s6">
+        <div class="sh"><span class="num">06</span><h2>La mémoire d'un processus</h2></div>
+        <p>Chaque processus voit un espace d'adressage virtuel organisé en zones. Le schéma ci-dessous est une représentation simplifiée et typique : la disposition réelle dépend du système, de l'architecture et du programme.</p>
+        <figure>
+          <div class="mem" role="img" aria-label="De haut en bas : pile, espace libre avec bibliothèques, tas, données, code.">
+            <div class="axis">Adresses hautes</div>
+            <div class="seg stack"><b>Pile (stack)</b><span>Variables locales et adresses de retour des fonctions. Sur x86, elle grandit en général vers le bas ↓</span></div>
+            <div class="seg gap"><b>Espace libre et autres régions mappées</b><span>Bibliothèques partagées (libc, DLL) et autres zones, à des emplacements variables</span></div>
+            <div class="seg heap"><b>Tas (heap)</b><span>Mémoire demandée pendant l'exécution (malloc). Il s'étend en général vers le haut ↑</span></div>
+            <div class="seg data"><b>Données</b><span>Variables globales (.data, .bss)</span></div>
+            <div class="seg code"><b>Code</b><span>Instructions du programme (.text), généralement en lecture et exécution, sans écriture.</span></div>
+            <div class="axis">Adresses basses</div>
+          </div>
+          <figcaption>Organisation typique et simplifiée de la mémoire virtuelle d'un processus sur x86-64.</figcaption>
+        </figure>
+        <h3>La mémoire virtuelle</h3>
+        <p>Un processus utilise des adresses virtuelles, que le processeur (via sa MMU) traduit en adresses physiques, généralement par pages de 4 Ko. Il ne manipule donc pas directement les adresses physiques de la RAM. Trois conséquences en découlent :</p>
+        <ul>
+          <li>Chaque processus est en principe isolé des autres, car il ne peut pas désigner leur mémoire (des mécanismes de mémoire partagée existent).</li>
+          <li>La RAM peut être complétée par un fichier d'échange (swap sous Linux, <code>pagefile.sys</code> sous Windows).</li>
+          <li>Chaque page porte des droits : lecture, écriture, exécution.</li>
+        </ul>
+        <div class="note"><span class="tag">Côté cyber</span><p>Un dépassement de tampon (buffer overflow) écrit au-delà de la zone prévue. Selon le cas, il corrompt des données ou, sur la pile, écrase une adresse de retour pour détourner le programme. Les systèmes modernes répondent par des protections complémentaires : NX ou DEP (certaines zones ne sont pas exécutables), ASLR (les adresses changent à chaque lancement) et canaris de pile (détection de certains écrasements). Elles réduisent des risques sans éliminer toutes les vulnérabilités. L'exploitation binaire est une branche du niveau 7.</p></div>
+      </section>
+
+      <!-- 07 -->
+      <section class="sec" id="s7">
+        <div class="sh"><span class="num">07</span><h2>Fichiers et systèmes de fichiers</h2></div>
+        <p>Un disque est une suite de blocs sans nom. Le système de fichiers leur donne une structure : noms, dossiers, tailles, dates, propriétaires et permissions. Sur Linux, chaque fichier est décrit par un inode. Sur NTFS, par une entrée de la table <code>$MFT</code>.</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Système de fichiers</th><th>On le trouve sur</th></tr></thead>
+            <tbody>
+              <tr><td>ext4, XFS, Btrfs</td><td>Linux</td></tr>
+              <tr><td>NTFS</td><td>Windows</td></tr>
+              <tr><td>FAT32, exFAT</td><td>Clés USB et cartes mémoire</td></tr>
+              <tr><td>APFS</td><td>macOS</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Sous Linux, presque tout est présenté comme un fichier : les disques dans <code>/dev</code>, les processus dans <code>/proc</code>, les périphériques. L'exercice 3 s'en sert.</p>
+        <h3>Extension et contenu</h3>
+        <p>L'extension d'un fichier (<code>.pdf</code>, <code>.jpg</code>) n'est qu'une étiquette. Le vrai type se lit dans les premiers octets, appelés nombre magique.</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Type</th><th>Premiers octets (hexadécimal)</th><th>En texte</th></tr></thead>
+            <tbody>
+              <tr><td>PDF</td><td><code>25 50 44 46</code></td><td><code>%PDF</code></td></tr>
+              <tr><td>PNG</td><td><code>89 50 4E 47</code></td><td><code>.PNG</code></td></tr>
+              <tr><td>ZIP</td><td><code>50 4B</code></td><td><code>PK</code></td></tr>
+              <tr><td>Exécutable Linux (ELF)</td><td><code>7F 45 4C 46</code></td><td><code>.ELF</code></td></tr>
+              <tr><td>Exécutable Windows (PE)</td><td><code>4D 5A</code></td><td><code>MZ</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note"><span class="tag">Côté cyber</span><p>Un fichier nommé <code>facture.pdf</code> peut être un exécutable. La commande <code>file</code> sous Linux lit le contenu et ignore l'extension. Autre point utile : supprimer un fichier retire souvent son entrée et marque l'espace comme libre, sans effacer le contenu tout de suite. Les outils de forensique retrouvent ces données tant qu'elles ne sont pas écrasées (sur un SSD, la commande TRIM peut les effacer plus vite).</p></div>
+      </section>
+
+      <!-- 08 -->
+      <section class="sec" id="s8">
+        <div class="sh"><span class="num">08</span><h2>Le démarrage</h2></div>
+        <p>Quand on appuie sur le bouton, aucun système n'est chargé. Chaque étape charge la suivante, un peu comme des poupées russes. Les trois premières étapes sont communes dans leur principe ; ensuite, Linux et Windows suivent des chaînes différentes.</p>
+        <ol class="boot">
+          <li><div class="bd"><b>Mise sous tension</b><p>À la mise sous tension, le processeur commence à exécuter le firmware selon le mécanisme prévu par la plateforme.</p></div></li>
+          <li><div class="bd"><b>Firmware UEFI (ou BIOS)</b><p>Initialise le matériel (POST), puis sélectionne un programme de démarrage. Le détail varie entre UEFI et BIOS.</p></div></li>
+          <li><div class="bd"><b>Chargeur d'amorçage</b><p>Lit sa configuration et charge le noyau en mémoire. Des étapes intermédiaires sont possibles.</p><span class="pill">Linux : GRUB</span><span class="pill">Windows : Boot Manager</span></div></li>
+          <li><div class="bd"><b>Noyau</b><p>S'initialise, détecte le matériel, charge les pilotes et monte le système de fichiers principal. Sous Linux, un mini-système appelé initramfs aide à cette étape.</p><span class="pill">Linux : vmlinuz</span><span class="pill">Windows : ntoskrnl.exe</span></div></li>
+          <li><div class="bd"><b>Premier processus</b><p>Les chaînes divergent ici. Sous Linux, le noyau lance un premier processus (PID 1) qui lance les services. Sous Windows, <code>smss.exe</code> lance <code>wininit.exe</code> (services, <code>lsass.exe</code>) et <code>winlogon.exe</code> (sessions).</p><span class="pill">Linux : systemd (PID 1 sur la plupart des distributions)</span><span class="pill">Windows : smss.exe, wininit.exe, winlogon.exe</span></div></li>
+          <li><div class="bd"><b>Services</b><p>Démarrent automatiquement : réseau, journaux, accès SSH, antivirus.</p></div></li>
+          <li><div class="bd"><b>Ouverture de session</b><p>L'utilisateur s'authentifie et obtient son environnement.</p></div></li>
+        </ol>
+        <p>Le Secure Boot, option de l'UEFI, vérifie les signatures des composants de démarrage selon les clés et règles configurées. Il peut bloquer certains composants non autorisés, mais ne garantit pas à lui seul que tout le système est sûr.</p>
+        <div class="note"><span class="tag">Côté cyber</span><p>Deux idées à retenir. D'abord, un code qui s'exécute tôt peut avoir une position privilégiée ou échapper à certaines défenses, selon son niveau de privilège, la plateforme et les protections actives (Secure Boot, par exemple). D'où l'enjeu de protéger la chaîne de démarrage : c'est la logique des bootkits et des implants de firmware. Ensuite, la persistance : un malware veut se relancer, au démarrage ou à l'ouverture de session, par un service, une tâche planifiée ou une clé de registre. Toute persistance ne passe donc pas par le démarrage. Les défenseurs examinent ces points d'entrée, par exemple avec l'outil Autoruns de Sysinternals.</p></div>
+      </section>
+
+      <!-- 09 -->
+      <section class="sec" id="s9">
+        <div class="sh"><span class="num">09</span><h2>La virtualisation</h2></div>
+        <p>Une machine virtuelle (VM) est un ordinateur simulé par logiciel, avec son propre système, son processeur et sa mémoire virtuels. Elle tourne sur un ordinateur réel appelé hôte. Le logiciel qui la fait fonctionner s'appelle un hyperviseur.</p>
+        <div class="grid">
+          <article class="card">
+            <h3>Hyperviseur de type 1</h3>
+            <p>Il s'installe directement sur le matériel. On le trouve dans les serveurs et les datacenters.</p>
+            <span class="k">Exemples</span><p>Proxmox VE, VMware ESXi, Hyper-V.</p>
+          </article>
+          <article class="card">
+            <h3>Hyperviseur de type 2</h3>
+            <p>Il s'installe comme une application dans un système existant. C'est le choix d'un lab personnel.</p>
+            <span class="k">Exemples</span><p>VirtualBox, VMware Workstation.</p>
+          </article>
+        </div>
+        <p>Un conteneur (Docker) n'est pas une VM : il partage le noyau de l'hôte, ce qui le rend plus léger et moins isolé. Les conteneurs sont vus au niveau 1.</p>
+        <p>En cybersécurité, la virtualisation sert à trois choses : isoler l'analyse (sans garantie absolue), revenir à un état précédent grâce à un snapshot, et expérimenter plus facilement. Une VM mal configurée ou une faille d'hyperviseur peut toutefois exposer l'hôte ou le réseau.</p>
+        <div class="note warn"><span class="tag">Éthique et droit</span><p>Ne teste que sur tes propres machines virtuelles ou sur des plateformes d'entraînement autorisées (TryHackMe, Hack The Box, ton lab). En France, l'article 323-1 du Code pénal punit l'accès frauduleux à un système. Le réflexe à retenir : ne teste que des systèmes qui t'appartiennent ou pour lesquels tu as une autorisation explicite. Une machine virtuelle aide à isoler l'analyse, mais ne garantit pas à elle seule qu'un malware ne puisse pas atteindre ton ordinateur ou ton réseau.</p></div>
+      </section>
+
+      <!-- 10 -->
+      <section class="sec" id="s10">
+        <div class="sh"><span class="num">10</span><h2>Le lien avec la cybersécurité</h2></div>
+        <p>Chaque couche offre une surface d'attaque, des techniques possibles et des signaux observables. Un signal seul ne prouve rien : il se lit en contexte, avec les autres.</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Couche</th><th>Technique possible</th><th>Ce qu'on peut observer</th><th>Ce que fait le défenseur</th></tr></thead>
+            <tbody>
+              <tr><td>Mémoire vive</td><td>Lecture de secrets, exécution de code sans écrire de fichier</td><td>Accès inhabituel à la mémoire d'un processus</td><td>Analyse mémoire (Volatility), EDR</td></tr>
+              <tr><td>Stockage et fichiers</td><td>Vol, chiffrement (ransomware), dissimulation de données</td><td>Chiffrements ou renommages massifs de fichiers</td><td>Sauvegardes, chiffrement de disque, forensique</td></tr>
+              <tr><td>Noyau et pilotes</td><td>Élévation de privilèges, rootkit, pilote vulnérable</td><td>Pilote inconnu, journaux manquants</td><td>Mises à jour, pilotes signés, intégrité du noyau</td></tr>
+              <tr><td>Processus</td><td>Injection de code, détournement d'un processus légitime</td><td>Parent inhabituel, ligne de commande étrange</td><td>Arbre parent-enfant, journaux de création de processus</td></tr>
+              <tr><td>Démarrage</td><td>Persistance, bootkit, implant de firmware</td><td>Chargeur modifié, Secure Boot désactivé</td><td>Secure Boot, audit des éléments lancés au démarrage</td></tr>
+              <tr><td>Carte réseau</td><td>Communication avec un serveur de commande, exfiltration</td><td>Connexions sortantes inhabituelles</td><td>Pare-feu, supervision du trafic (niveau 3)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Le fil rouge, de bout en bout</h3>
+        <p>Reprenons l'exemple du début : tu tapes une adresse dans ton navigateur.</p>
+        <ol class="cycle">
+          <li><b>Lancer</b>Le navigateur est un programme stocké sur le disque. Le système le charge en mémoire : c'est un processus (sections 5 et 6).</li>
+          <li><b>Taper</b>Le clavier signale une touche, un pilote la traduit et le système la remet au navigateur (section 4).</li>
+          <li><b>Demander</b>Le navigateur demande au noyau, par des appels système, d'ouvrir une connexion. Le système pilote la carte réseau et applique TCP/IP (niveau 3).</li>
+          <li><b>Calculer</b>Le processeur exécute les instructions du navigateur, qui construit la page en RAM (sections 2 et 3).</li>
+          <li><b>Afficher</b>Le GPU et l'écran montrent la page. Des éléments peuvent être gardés en cache sur le stockage.</li>
+          <li><b>Observer</b>Chaque étape laisse des traces : processus, connexions, fichiers, journaux.</li>
+        </ol>
+        <p>Cette fiche ne te demande pas de choisir un rôle. Elle te donne le plan de la machine : un analyste SOC lira les traces que ces couches laissent, un pentesteur cherchera la faille dans l'une d'elles, un auditeur vérifiera que les protections sont en place.</p>
+      </section>
+
+      <!-- 11 -->
+      <section class="sec" id="s11">
+        <div class="sh"><span class="num">11</span><h2>Exercices pratiques</h2></div>
+        <p>Six exercices, à faire dans une machine virtuelle Linux (Debian ou Ubuntu) ou sur Windows avec PowerShell. Essaie de répondre aux questions avant d'ouvrir la solution.</p>
+
+        <article class="ex">
+          <div class="ex-h"><b>Exercice 1</b><h3>Faire l'inventaire de sa machine</h3></div>
+          <p class="q">Combien de cœurs, combien de RAM, quelle taille de disque, quelle adresse IP ?</p>
+          <div class="cb"><div class="cb-h"><span>Linux</span><button type="button" class="copy">Copier</button></div><pre><code>lscpu | head -15
+free -h
+lsblk
+ip -br a</code></pre></div>
+          <div class="cb"><div class="cb-h"><span>Windows PowerShell</span><button type="button" class="copy">Copier</button></div><pre><code>Get-CimInstance Win32_Processor | Select-Object Name, NumberOfCores, NumberOfLogicalProcessors
+Get-CimInstance Win32_ComputerSystem | Select-Object TotalPhysicalMemory
+Get-Disk
+Get-NetAdapter</code></pre></div>
+          <details class="sol"><summary>Voir la solution</summary><div>
+            <p>Dans <code>lscpu</code>, lis <code>Model name</code>, <code>CPU(s)</code> (le nombre de processeurs logiques) et <code>Core(s) per socket</code>. La commande <code>free -h</code> affiche total, used, free et available : <code>available</code> est la mémoire que les programmes peuvent réellement utiliser. <code>lsblk</code> liste les disques (<code>sda</code>, <code>nvme0n1</code>) et leurs partitions. Sous Windows, <code>TotalPhysicalMemory</code> est donné en octets.</p>
+            <p>Dans une machine virtuelle, tu vois le matériel virtuel fourni par l'hyperviseur, pas le vrai.</p>
+          </div></details>
+        </article>
+
+        <article class="ex">
+          <div class="ex-h"><b>Exercice 2</b><h3>Observer les processus</h3></div>
+          <p class="q">Quel programme porte le PID 1 ? Quel est le parent de ton terminal ? Quel processus a utilisé le plus de temps processeur ?</p>
+          <p>Pour commencer sans ligne de commande, c'est le défi du carrousel : sous Windows, ouvre le gestionnaire des tâches (Ctrl + Maj + Échap) ; sous macOS, ouvre le Moniteur d'activité. Repère ton navigateur : combien de processus a-t-il ? Lequel utilise le plus de mémoire, et quel est son PID ? Les commandes ci-dessous font la même chose en plus précis.</p>
+          <div class="cb"><div class="cb-h"><span>Linux</span><button type="button" class="copy">Copier</button></div><pre><code>ps -p 1 -o pid,ppid,comm
+echo $$
+ps -o pid,ppid,comm -p $$
+ps -ef --forest | head -25</code></pre></div>
+          <div class="cb"><div class="cb-h"><span>Windows PowerShell</span><button type="button" class="copy">Copier</button></div><pre><code>Get-Process | Sort-Object CPU -Descending | Select-Object -First 10 Name, Id, CPU
+Get-CimInstance Win32_Process | Select-Object -First 15 Name, ProcessId, ParentProcessId</code></pre></div>
+          <details class="sol"><summary>Voir la solution</summary><div>
+            <p>Un navigateur moderne lance souvent de nombreux processus pour isoler des tâches, des sites ou des extensions. Le nombre exact dépend du navigateur et de sa configuration. Sur la plupart des distributions, le PID 1 est <code>systemd</code> (parfois <code>init</code>). La commande <code>echo $$</code> donne le PID de ton shell, et son parent est souvent le terminal ou <code>sshd</code>. Dans l'affichage <code>--forest</code>, les lignes décalées sont les enfants du processus au-dessus. Sous Windows, la colonne <code>ParentProcessId</code> permet de reconstruire le même arbre. Attention : la colonne <code>CPU</code> de <code>Get-Process</code> est le temps processeur cumulé depuis le lancement, pas l'usage actuel. Pour l'usage en direct, trie la colonne « Processeur » du Gestionnaire des tâches.</p>
+          </div></details>
+        </article>
+
+        <article class="ex">
+          <div class="ex-h"><b>Exercice 3</b><h3>Lire la mémoire d'un processus avec /proc</h3></div>
+          <p class="q">Où sont le tas et la pile du processus ? Quelles zones sont exécutables ?</p>
+          <div class="cb"><div class="cb-h"><span>Linux</span><button type="button" class="copy">Copier</button></div><pre><code>head -5 /proc/meminfo
+grep -m1 "model name" /proc/cpuinfo
+cat /proc/self/maps
+sleep 300 &amp;
+grep -E "heap|stack" /proc/$!/maps
+kill $!
+ls -l /proc/self/exe</code></pre></div>
+          <details class="sol"><summary>Voir la solution</summary><div>
+            <p><code>/proc</code> n'est pas un vrai dossier : le noyau y publie son état en direct. Le fichier <code>maps</code> liste les zones mémoire d'un processus. Avec <code>self</code>, c'est celui qui lit le fichier (ici <code>cat</code> ou <code>grep</code>, pas ton terminal). Pour un autre processus, utilise son PID : <code>/proc/PID/maps</code> (<code>$!</code> est le PID de la dernière commande lancée en arrière-plan), sous réserve des permissions. Les zones sont listées avec leurs droits : <code>r</code> lecture, <code>w</code> écriture, <code>x</code> exécution, <code>p</code> privé. Les lignes <code>[heap]</code> et <code>[stack]</code> sont le tas et la pile de la section 6.</p>
+            <p>Les zones de code apparaissent en <code>r-xp</code> et les données en <code>rw-p</code>. En général, aucune zone n'est à la fois inscriptible et exécutable : c'est l'idée de NX. La commande <code>ls -l /proc/self/exe</code> montre quel programme est en cours d'exécution.</p>
+          </div></details>
+        </article>
+
+        <article class="ex">
+          <div class="ex-h"><b>Exercice 4</b><h3>Voir les appels système</h3></div>
+          <p class="q">Combien d'appels système une simple commande <code>cat</code> déclenche-t-elle, et lesquels ?</p>
+          <div class="cb"><div class="cb-h"><span>Linux</span><button type="button" class="copy">Copier</button></div><pre><code>sudo apt install strace
+strace -e trace=openat,read,write,close cat /etc/hostname
+strace -c ls /tmp &gt; /dev/null</code></pre></div>
+          <details class="sol"><summary>Voir la solution</summary><div>
+            <p>Même un <code>cat</code> de quelques octets passe par <code>openat</code> (ouvrir le fichier), <code>read</code> (lire), <code>write</code> (écrire à l'écran) et <code>close</code>. Le programme ne touche jamais le disque lui-même : il demande au noyau. L'option <code>-c</code> affiche un résumé du nombre d'appels de chaque type.</p>
+            <p>Les outils de sécurité observent ces mêmes actions pour repérer des comportements suspects : auditd sous Linux, Sysmon et les EDR sous Windows.</p>
+          </div></details>
+        </article>
+
+        <article class="ex">
+          <div class="ex-h"><b>Exercice 5</b><h3>Retrouver les traces du démarrage</h3></div>
+          <p class="q">Combien de temps le démarrage a-t-il pris, et quel service est le plus lent ?</p>
+          <div class="cb"><div class="cb-h"><span>Linux</span><button type="button" class="copy">Copier</button></div><pre><code>systemd-analyze
+systemd-analyze blame | head -10
+journalctl -b | head -30
+sudo dmesg | head -30</code></pre></div>
+          <div class="cb"><div class="cb-h"><span>Windows PowerShell</span><button type="button" class="copy">Copier</button></div><pre><code>(Get-CimInstance Win32_OperatingSystem).LastBootUpTime
+Get-WinEvent -FilterHashtable @{LogName='System'; Id=6005} -MaxEvents 3</code></pre></div>
+          <details class="sol"><summary>Voir la solution</summary><div>
+            <p><code>systemd-analyze</code> sépare le temps passé dans le firmware, le chargeur, le noyau et l'espace utilisateur (dans une VM, firmware et chargeur peuvent être absents). La commande <code>blame</code> classe les services du plus lent au plus rapide. Les premières lignes de <code>dmesg</code> sont les messages du noyau : détection du processeur, de la mémoire, des pilotes.</p>
+            <p>Sous Windows, l'événement 6005 est écrit au démarrage du service Journal d'événements : c'est un indice temporel du démarrage, pas une mesure de sa durée totale. Pour une durée, regarde le journal Diagnostics-Performance de l'observateur d'événements (événement 100).</p>
+          </div></details>
+        </article>
+
+        <article class="ex">
+          <div class="ex-h"><b>Exercice 6</b><h3>Monter son premier lab avec un snapshot</h3></div>
+          <p class="q">Comment revenir à un état propre après une erreur ?</p>
+          <ol>
+            <li>Installe VirtualBox et crée une machine virtuelle Debian ou Ubuntu (2 Go de RAM, 2 cœurs, 25 Go de disque suffisent).</li>
+            <li>Installe le système, puis prends un snapshot nommé <code>propre</code>.</li>
+            <li>Dans la VM, installe un paquet : <code>sudo apt install tree</code>, puis vérifie avec <code>tree --version</code>.</li>
+            <li>Restaure le snapshot <code>propre</code>, puis relance <code>tree --version</code>.</li>
+          </ol>
+          <details class="sol"><summary>Voir la solution</summary><div>
+            <p>Après la restauration, la commande <code>tree</code> est introuvable : la VM est revenue exactement à l'état du snapshot. C'est la base d'un lab : tu peux expérimenter, casser, puis recommencer sans conséquence.</p>
+          </div></details>
+        </article>
+      </section>
+
+      <!-- 12 -->
+      <section class="sec" id="s12">
+        <div class="sh"><span class="num">12</span><h2>Vérifier ses acquis</h2></div>
+        <p>Coche ce que tu sais expliquer avec tes propres mots. Tes cases sont gardées dans ce navigateur.</p>
+        <div class="score"><span id="cnt">0 / 9</span><div class="tr" aria-hidden="true"><i id="cbar"></i></div></div>
+        <label class="chk" for="c1"><input type="checkbox" id="c1"><span>Je nomme les composants principaux (processeur, RAM, stockage, carte réseau) et leur rôle.</span></label>
+        <label class="chk" for="c2"><input type="checkbox" id="c2"><span>J'explique pourquoi la RAM est volatile et pourquoi c'est important en forensique.</span></label>
+        <label class="chk" for="c3"><input type="checkbox" id="c3"><span>Je sais ce qu'est un noyau et pourquoi les programmes passent par des appels système.</span></label>
+        <label class="chk" for="c4"><input type="checkbox" id="c4"><span>Je distingue un programme, un processus et un thread.</span></label>
+        <label class="chk" for="c5"><input type="checkbox" id="c5"><span>Je sais dessiner une représentation simplifiée de la mémoire d'un processus : code, données, tas, pile.</span></label>
+        <label class="chk" for="c6"><input type="checkbox" id="c6"><span>Je décris la chaîne de démarrage, de l'allumage à l'ouverture de session, avec ce qui diffère entre Linux et Windows.</span></label>
+        <label class="chk" for="c7"><input type="checkbox" id="c7"><span>Je comprends pourquoi on travaille dans une machine virtuelle avec des snapshots.</span></label>
+        <label class="chk" for="c8"><input type="checkbox" id="c8"><span>Je sais examiner un processus : nom, chemin, ligne de commande, parent, utilisateur, réseau.</span></label>
+        <label class="chk" for="c9"><input type="checkbox" id="c9"><span>J'ai fait les six exercices.</span></label>
+      </section>
+
+      <!-- 13 -->
+      <section class="sec" id="s13">
+        <div class="sh"><span class="num">13</span><h2>Pour aller plus loin</h2></div>
+        <ul class="res">
+          <li><b>Crash Course Computer Science</b>, série de vidéos sur YouTube qui explique l'ordinateur des portes logiques jusqu'aux systèmes d'exploitation.</li>
+          <li><b><a href="https://www.nand2tetris.org" target="_blank" rel="noopener">Nand2Tetris</a></b>, cours qui fait construire un ordinateur complet, du transistor logique jusqu'à un jeu.</li>
+          <li><b><a href="https://pages.cs.wisc.edu/~remzi/OSTEP/" target="_blank" rel="noopener">Operating Systems: Three Easy Pieces</a></b>, livre gratuit sur les processus, la mémoire et les fichiers.</li>
+          <li><b><a href="https://overthewire.org/wargames/bandit/" target="_blank" rel="noopener">OverTheWire Bandit</a></b>, jeu pour apprendre les commandes Linux en pratiquant.</li>
+          <li><b>TryHackMe</b>, salles Linux Fundamentals et Windows Fundamentals pour manipuler les deux systèmes.</li>
+          <li><b>Sysinternals</b> (Microsoft) : Process Explorer pour voir l'arbre des processus, Autoruns pour voir ce qui démarre.</li>
+        </ul>
+        <h3>Glossaire</h3>
+        <dl class="gl">
+          <div><dt>CPU</dt><dd>Processeur. Exécute les instructions.</dd></div>
+          <div><dt>RAM</dt><dd>Mémoire vive. Rapide et volatile.</dd></div>
+          <div><dt>Firmware, UEFI</dt><dd>Premier programme exécuté à l'allumage, stocké sur la carte mère.</dd></div>
+          <div><dt>Noyau (kernel)</dt><dd>Cœur du système d'exploitation, avec tous les privilèges.</dd></div>
+          <div><dt>Pilote (driver)</dt><dd>Module qui sait parler à un matériel précis.</dd></div>
+          <div><dt>Appel système</dt><dd>Demande d'un programme au noyau, par exemple ouvrir un fichier.</dd></div>
+          <div><dt>Processus, PID</dt><dd>Programme en cours d'exécution et son identifiant.</dd></div>
+          <div><dt>Thread</dt><dd>Fil d'exécution à l'intérieur d'un processus.</dd></div>
+          <div><dt>Pile (stack)</dt><dd>Zone mémoire des variables locales et des adresses de retour.</dd></div>
+          <div><dt>Tas (heap)</dt><dd>Zone mémoire demandée pendant l'exécution.</dd></div>
+          <div><dt>Hyperviseur</dt><dd>Logiciel qui fait tourner des machines virtuelles.</dd></div>
+          <div><dt>Persistance</dt><dd>Technique pour qu'un programme se relance à chaque démarrage.</dd></div>
+          <div><dt>Élévation de privilèges</dt><dd>Passage de droits limités à des droits plus élevés.</dd></div>
+        </dl>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="wrap">
+    <p><b>404 CyberFound</b> · Décrypter. Comprendre. Sécuriser.</p>
+    <p>Fiche suivante : 0.2 · L'information en binaire, hexadécimal et encodages</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  /* Sommaire ouvert sur grand écran, replié sur téléphone */
+  var toc = $('#toc');
+  var mq = window.matchMedia('(min-width: 1000px)');
+  function syncToc() { if (toc) { toc.open = mq.matches; } }
+  syncToc();
+  if (mq.addEventListener) { mq.addEventListener('change', syncToc); }
+
+  /* Progression de lecture et section active */
+  var bar = $('#bar');
+  var links = $$('.toc a');
+  var secs = $$('main section[id]');
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var h = document.documentElement;
+    var max = h.scrollHeight - window.innerHeight;
+    var p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    if (bar) { bar.style.transform = 'scaleX(' + p + ')'; }
+    var current = null;
+    for (var i = 0; i < secs.length; i++) {
+      if (secs[i].getBoundingClientRect().top <= 120) { current = secs[i].id; }
+    }
+    links.forEach(function (a) {
+      var on = a.getAttribute('href') === '#' + current;
+      a.classList.toggle('on', on);
+      if (on) { a.setAttribute('aria-current', 'true'); } else { a.removeAttribute('aria-current'); }
+    });
+  }
+  function onScroll() { if (!ticking) { ticking = true; window.requestAnimationFrame(update); } }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  update();
+
+  /* Boutons Copier */
+  $$('.copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var code = btn.closest('.cb').querySelector('code');
+      var text = code.innerText;
+      function done(label) {
+        btn.textContent = label;
+        setTimeout(function () { btn.textContent = 'Copier'; }, 1600);
+      }
+      function fallback() {
+        try {
+          var r = document.createRange();
+          r.selectNodeContents(code);
+          var s = window.getSelection();
+          s.removeAllRanges();
+          s.addRange(r);
+          done('Sélectionné');
+        } catch (e) { done('Copier'); }
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { done('Copié'); }, fallback);
+      } else { fallback(); }
+    });
+  });
+
+  /* Checklist gardée dans ce navigateur */
+  var KEY = '404cf-fiche-0.1-checks';
+  var boxes = $$('.chk input');
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { saved = {}; }
+  function count() {
+    var n = boxes.filter(function (b) { return b.checked; }).length;
+    $('#cnt').textContent = n + ' / ' + boxes.length;
+    $('#cbar').style.width = (100 * n / boxes.length) + '%';
+  }
+  boxes.forEach(function (b) {
+    b.checked = !!saved[b.id];
+    b.addEventListener('change', function () {
+      saved[b.id] = b.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) { /* stockage indisponible */ }
+      count();
+    });
+  });
+  count();
+})();
+</script>
+
+</body></html>
