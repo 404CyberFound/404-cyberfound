@@ -21,22 +21,13 @@
 - **Approche :** explications accessibles, terminologie précise et références vérifiables.
 
 ## `> BIBLIOTHÈQUE`
-
-### Niveau 0 — Les racines
-
-| Ressource | Format | Accès |
-|---|---|---|
-| **0.1 — Comment fonctionne un ordinateur ?** | Guide HTML | [Ouvrir le guide](guides/00-fondamentaux/comprendre-un-ordinateur.html) |
-| **0.1 — Fiche récapitulative** | PDF | [Lire ou télécharger](fiches/00-fondamentaux/fiche-0.1-comment-fonctionne-un-ordinateur.pdf) |
-
-### Prochaines catégories
-
-- `01 — Réseaux & protocoles`
-- `02 — Systèmes & sécurité`
-- `03 — Fondamentaux de cybersécurité`
-- `04 — SOC, SIEM & analyse des menaces`
-- `05 — Sécurité offensive`
-- `06 — Gouvernance, risques & conformité`
+- `01 — Comment fonctionne un ordinateur`
+- `02 — Réseaux & protocoles`
+- `03 — Systèmes & sécurité`
+- `04 — Fondamentaux de cybersécurité`
+- `05 — SOC, SIEM & analyse des menaces`
+- `06 — Sécurité offensive`
+- `07 — Gouvernance, risques & conformité`
 
 Les catégories seront alimentées au fil des publications.
 
