@@ -1,10 +1,10 @@
- <div align="center">
+<div align="center">
 
-<img src="https://img.shields.io/badge/404_CYBERFOUND-ROOT_ACCESS-0B1117?style=for-the-badge&labelColor=183D35&color=0B1117" alt="404 CyberFound — Root Access" />
+<img src="https://img.shields.io/badge/404_CYBERFOUND-ROOT_ACCESS-0B1117?style=for-the-badge&labelColor=B6FF40&color=0B1117" alt="404 CyberFound — Root Access" />
 
 <br/>
 
-<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=22&duration=2800&pause=900&color=789A8A&center=true&vCenter=true&width=650&lines=%3E+Decrypt.+Understand.+Secure.;%3E+Explore+the+digital+world.;%3E+Build+your+cyber+foundations" alt="Décrypter. Comprendre. Sécuriser." />
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=22&duration=2800&pause=900&color=B6FF40&center=true&vCenter=true&width=650&lines=%3E+Decrypt.+Understand.+Secure.;%3E+Explore+the+digital+world.;%3E+Build+your+cyber+foundations" alt="Décrypter. Comprendre. Sécuriser." />
 
 <br/>
 
@@ -15,13 +15,16 @@ une bibliothèque pour comprendre ce qui se passe *sous le capot*.
 
 <br/>
 
-<a href="#-explorer-la-base-de-connaissances"><img src="https://img.shields.io/badge/01_EXPLORE-Guides-789A8A?style=for-the-badge&labelColor=0B1117" alt="Explorer les guides" /></a>
-<a href="#-le-parcours"><img src="https://img.shields.io/badge/02_LEARN-Roadmap-8BAAC4?style=for-the-badge&labelColor=0B1117" alt="Parcours" /></a>
-<a href="#-contribuer"><img src="https://img.shields.io/badge/03_IMPROVE-Contribute-8BAAC4?style=for-the-badge&labelColor=0B1117" alt="Contribuer" /></a>
+<a href="#-explorer-la-base-de-connaissances"><img src="https://img.shields.io/badge/01_EXPLORE-Guides-B6FF40?style=for-the-badge&labelColor=0B1117" alt="Explorer les guides" /></a>
+<a href="#-le-parcours"><img src="https://img.shields.io/badge/02_LEARN-Roadmap-A5C7F0?style=for-the-badge&labelColor=0B1117" alt="Parcours" /></a>
+<a href="#-contribuer"><img src="https://img.shields.io/badge/03_IMPROVE-Contribute-8FD957?style=for-the-badge&labelColor=0B1117" alt="Contribuer" /></a>
 
 <br/><br/>
 
-<img src="https://img.shields.io/badge/DOMAIN-IT_%2B_CYBER-789A8A?style=flat-square&labelColor=102A25" alt="IT et cyber" /> <img src="https://img.shields.io/badge/FORMAT-HTML_%2B_PDF-8BAAC4?style=flat-square&labelColor=14283D" alt="HTML et PDF" /> <img src="https://img.shields.io/badge/LANGUAGE-FR-789A8A?style=flat-square&labelColor=102A25" alt="Français" /> <img src="https://img.shields.io/badge/ACCESS-OPEN_KNOWLEDGE-8BAAC4?style=flat-square&labelColor=14283D" alt="Connaissance ouverte" />
+<img src="https://img.shields.io/badge/DOMAIN-IT_%2B_CYBER-B6FF40?style=flat-square&labelColor=18352B" alt="IT et cyber" />
+<img src="https://img.shields.io/badge/FORMAT-HTML_%2B_PDF-A5C7F0?style=flat-square&labelColor=17283A" alt="HTML et PDF" />
+<img src="https://img.shields.io/badge/LANGUAGE-FR-8FD957?style=flat-square&labelColor=18352B" alt="Français" />
+<img src="https://img.shields.io/badge/ACCESS-OPEN_KNOWLEDGE-A5C7F0?style=flat-square&labelColor=17283A" alt="Connaissance ouverte" />
 
 </div>
 
@@ -59,7 +62,7 @@ Pas de jargon inutile. Pas de concepts magiques. On décompose, on observe, on c
 <tr>
 <td width="50%" valign="top">
 
-<img src="https://img.shields.io/badge/MODULE_01-HARDWARE-789A8A?style=flat-square&labelColor=102A25" alt="Module 1" />
+<img src="https://img.shields.io/badge/MODULE_01-HARDWARE-B6FF40?style=flat-square&labelColor=18352B" alt="Module 1" />
 
 ### 💻 Comprendre un ordinateur
 
@@ -72,7 +75,7 @@ CPU, RAM, stockage, système d'exploitation, processus et exécution des program
 </td>
 <td width="50%" valign="top">
 
-<img src="https://img.shields.io/badge/MODULE_02-NETWORKS-8BAAC4?style=flat-square&labelColor=14283D" alt="Module 2" />
+<img src="https://img.shields.io/badge/MODULE_02-NETWORKS-A5C7F0?style=flat-square&labelColor=17283A" alt="Module 2" />
 
 ### 🌐 Réseaux & protocoles
 
@@ -87,7 +90,7 @@ Adresses IP, ports, DNS, HTTP, TCP/UDP et circulation des données.
 <tr>
 <td width="50%" valign="top">
 
-<img src="https://img.shields.io/badge/MODULE_03-OPERATING_SYSTEMS-789A8A?style=flat-square&labelColor=102A25" alt="Module 3" />
+<img src="https://img.shields.io/badge/MODULE_03-OPERATING_SYSTEMS-8FD957?style=flat-square&labelColor=18352B" alt="Module 3" />
 
 ### 🖥️ Systèmes & architecture
 
@@ -100,7 +103,7 @@ Windows, Linux, processus, permissions, mémoire et mécanismes système.
 </td>
 <td width="50%" valign="top">
 
-<img src="https://img.shields.io/badge/MODULE_04-DEFENSE-8BAAC4?style=flat-square&labelColor=14283D" alt="Module 4" />
+<img src="https://img.shields.io/badge/MODULE_04-DEFENSE-A5C7F0?style=flat-square&labelColor=17283A" alt="Module 4" />
 
 ### 🛡️ Fondamentaux de cybersécurité
 
@@ -115,7 +118,7 @@ Menaces, vulnérabilités, authentification, défense en profondeur et bonnes pr
 <tr>
 <td width="50%" valign="top">
 
-<img src="https://img.shields.io/badge/MODULE_05-SECURITY_OPERATIONS-789A8A?style=flat-square&labelColor=102A25" alt="Module 5" />
+<img src="https://img.shields.io/badge/MODULE_05-SECURITY_OPERATIONS-B6FF40?style=flat-square&labelColor=18352B" alt="Module 5" />
 
 ### 🔎 SOC, SIEM & threat analysis
 
@@ -128,7 +131,7 @@ Logs, alertes, événements de sécurité, triage et analyse des menaces.
 </td>
 <td width="50%" valign="top">
 
-<img src="https://img.shields.io/badge/MODULE_06-OFFENSIVE_SECURITY-8BAAC4?style=flat-square&labelColor=14283D" alt="Module 6" />
+<img src="https://img.shields.io/badge/MODULE_06-OFFENSIVE_SECURITY-A5C7F0?style=flat-square&labelColor=17283A" alt="Module 6" />
 
 ### ⚔️ Sécurité offensive
 
@@ -143,7 +146,7 @@ Reconnaissance, analyse des vulnérabilités et tests en environnement autorisé
 <tr>
 <td colspan="2" valign="top">
 
-<img src="https://img.shields.io/badge/MODULE_07-GOVERNANCE-789A8A?style=flat-square&labelColor=102A25" alt="Module 7" />
+<img src="https://img.shields.io/badge/MODULE_07-GOVERNANCE-8FD957?style=flat-square&labelColor=18352B" alt="Module 7" />
 
 ### 📋 Gouvernance, risques & conformité
 
@@ -255,7 +258,7 @@ Corriger, vérifier et améliorer.
 
 Tu as repéré une erreur ou une explication qui mérite d'être améliorée ?
 
-<a href="../../issues"><img src="https://img.shields.io/badge/OPEN_AN_ISSUE-Signaler_une_erreur-789A8A?style=for-the-badge&labelColor=102A25" alt="Signaler une erreur" /></a>
+<a href="../../issues"><img src="https://img.shields.io/badge/OPEN_AN_ISSUE-Signaler_une_erreur-B6FF40?style=for-the-badge&labelColor=18352B" alt="Signaler une erreur" /></a>
 
 Pour faciliter la correction, indique :
 
@@ -270,7 +273,7 @@ Pour faciliter la correction, indique :
 
 <div align="center">
 
-<img src="https://img.shields.io/badge/404_CYBERFOUND-KEEP_EXPLORING-789A8A?style=for-the-badge&labelColor=0B1117" alt="Keep exploring" />
+<img src="https://img.shields.io/badge/404_CYBERFOUND-KEEP_EXPLORING-B6FF40?style=for-the-badge&labelColor=0B1117" alt="Keep exploring" />
 
 <br/>
 
@@ -281,3 +284,4 @@ Pour faciliter la correction, indique :
 <sub>Projet pédagogique indépendant · Ressources en français</sub>
 
 </div>
+```
