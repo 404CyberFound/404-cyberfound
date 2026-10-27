@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binaire, hexadécimal et encodages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070B0A;--surface:#0D1411;--surface2:#111A16;--border:#1E2B25;--accent:#9BF03C;--accent-rgb:155,240,60;--yellow:#F2B84B;--red:#FF6B6B;--text:#E8EEEA;--soft:#BFCAC4;--muted:#8D9993;--mono:'JetBrains Mono',ui-monospace,monospace;--sans:'Inter',system-ui,sans-serif;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.75;padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px))}
+.hero{position:relative;overflow:hidden;padding:64px 24px 52px;text-align:center;background:linear-gradient(160deg,#070B0A 0%,#0A120E 60%,#08140F 100%);border-bottom:1px solid var(--border)}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 700px 300px at 50% -60px,rgba(var(--accent-rgb),.09) 0%,transparent 70%),radial-gradient(ellipse 400px 200px at 80% 100%,rgba(var(--accent-rgb),.05) 0%,transparent 70%);pointer-events:none}
+.hero>*{position:relative}
+.brand{display:inline-flex;align-items:center;gap:10px;margin-bottom:26px;font:700 13px/1 var(--mono);letter-spacing:.14em;color:var(--text)}
+.brand img{width:38px;height:38px;border-radius:50%}
+.brand b{color:var(--accent)}
+.hero-chip{display:inline-flex;align-items:center;gap:7px;background:rgba(var(--accent-rgb),.1);border:1px solid rgba(var(--accent-rgb),.28);color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin:0 0 22px}
+.hero h1{font-size:clamp(30px,6vw,54px);font-weight:800;line-height:1.1;letter-spacing:-.03em;margin-bottom:18px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero .sub{color:var(--muted);font-size:16px;max-width:620px;margin:0 auto 34px}
+.hero-stats{display:flex;justify-content:center;gap:48px;flex-wrap:wrap}
+.hero-stat .n{font-size:32px;font-weight:800;color:var(--accent);line-height:1}
+.hero-stat .l{font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+.wrap{max-width:920px;margin:0 auto;padding:0 16px}
+.toc{max-width:920px;margin:36px auto;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px 28px}
+.toc-title{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:6px}
+.toc-link{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;color:var(--text);text-decoration:none;font-size:13px;transition:background .15s;min-width:0}
+.toc-link:hover,.toc-link:focus-visible{background:var(--surface2)}
+.toc-n{font-family:var(--mono);font-size:10px;color:var(--accent);min-width:24px;font-weight:600}
+.module,.roadmap-wrap,.aperc{max-width:920px;margin:28px auto;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.mod-head{padding:24px 32px 20px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:16px}
+.mod-tag{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--accent);background:rgba(var(--accent-rgb),.1);border:1px solid rgba(var(--accent-rgb),.22);padding:4px 10px;border-radius:6px;white-space:nowrap;margin-top:3px}
+.mod-head h2{font-size:21px;font-weight:700;margin-bottom:4px;line-height:1.3;text-wrap:balance}
+.mod-head p{color:var(--muted);font-size:13px;margin:0}
+.mod-body{padding:28px 32px}
+.mod-body>*:last-child{margin-bottom:0}
+h3{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.12em;margin:30px 0 14px;display:flex;align-items:center;gap:10px}
+h3::after{content:'';flex:1;height:1px;background:var(--border)}
+.mod-body>h3:first-child{margin-top:0}
+h4{font-size:15px;font-weight:600;margin:18px 0 8px;color:var(--text)}
+p{color:var(--soft);margin-bottom:13px;font-size:14px;max-width:72ch}
+a{color:var(--accent)}
+ul,ol{list-style:none;padding:0;margin-bottom:16px}
+li{padding:7px 0 7px 24px;position:relative;color:var(--soft);font-size:14px;border-bottom:1px solid rgba(30,43,37,.7)}
+li:last-child{border-bottom:none}
+ul li::before{content:'▸';position:absolute;left:0;color:var(--accent);top:8px;font-size:11px}
+ol{counter-reset:ol}
+ol li{counter-increment:ol}
+ol li::before{content:counter(ol);position:absolute;left:0;top:10px;background:rgba(var(--accent-rgb),.12);color:var(--accent);font:700 9px/15px var(--mono);width:15px;height:15px;border-radius:50%;text-align:center}
+li strong,p strong{color:var(--text)}
+code{font-family:var(--mono);font-size:12px;background:rgba(var(--accent-rgb),.08);border:1px solid rgba(var(--accent-rgb),.2);color:var(--accent);padding:2px 7px;border-radius:4px;overflow-wrap:anywhere}
+.tw{overflow-x:auto;margin:14px 0 20px;border:1px solid var(--border);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--surface2);color:var(--muted);font-weight:700;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid rgba(30,43,37,.6);color:var(--soft);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(var(--accent-rgb),.03)}
+td strong{color:var(--text)}
+.tip,.warn,.danger,.info{display:flex;gap:12px;padding:14px 18px;border-radius:9px;margin:16px 0;font-size:13px;align-items:flex-start;line-height:1.6}
+.tip{background:rgba(var(--accent-rgb),.07);border-left:3px solid var(--accent);color:#C9EFA0}
+.warn{background:rgba(242,184,75,.07);border-left:3px solid var(--yellow);color:#F0D49A}
+.danger{background:rgba(255,107,107,.07);border-left:3px solid var(--red);color:#F0A9A9}
+.info{background:rgba(141,153,147,.09);border-left:3px solid #4F6B5C;color:#C3CEC8}
+.tip strong,.warn strong,.danger strong,.info strong{color:inherit}
+.ci{font-size:15px;flex-shrink:0;margin-top:1px}
+.tip code,.warn code,.info code{background:rgba(0,0,0,.25)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:12px;margin:16px 0 20px}
+.card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px 18px}
+.card .ic{font-size:24px;margin-bottom:8px}
+.card h5{font-size:13px;font-weight:700;margin-bottom:5px;color:var(--text)}
+.card p{font-size:12px;color:var(--muted);margin:0 0 6px}
+.card .an{color:var(--accent);font-size:12px;margin:0}
+.steps{display:flex;flex-direction:column;margin:16px 0 20px 6px}
+.step{display:flex;gap:18px;padding:12px 0 12px 22px;border-left:2px solid var(--border);position:relative}
+.step::before{content:'';position:absolute;left:-5px;top:20px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.step-num{font:700 11px/1.6 var(--mono);color:var(--accent);min-width:22px;padding-top:2px}
+.step-body{min-width:0}
+.step-body h4{font-size:14px;margin:0 0 4px}
+.step-body p{font-size:13px;color:var(--muted);margin:0}
+.cb,.sim,.ex,.sol{min-width:0}
+.cb{background:#050807;border:1px solid var(--border);border-radius:10px;margin:14px 0 22px;overflow:hidden}
+.cb-h{background:var(--surface2);padding:8px 14px 8px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.cb-h span{font:700 11px/1 var(--mono);color:var(--accent);letter-spacing:.05em;text-transform:uppercase}
+.copy{font:600 11px/1 var(--mono);background:var(--surface);color:var(--muted);border:1px solid var(--border);border-radius:5px;padding:7px 10px;min-height:32px;cursor:pointer}
+.copy:hover{color:var(--accent);border-color:rgba(var(--accent-rgb),.4)}
+.cb pre{padding:16px 20px;overflow-x:auto;font:12.5px/1.7 var(--mono);color:#CDD6D0}
+.cb pre code{background:none;border:0;padding:0;color:inherit;font-size:inherit;overflow-wrap:normal}
+.sim{background:var(--surface2);border:1px solid rgba(var(--accent-rgb),.25);border-radius:12px;padding:20px;margin:20px 0 24px}
+.sim h3{font-size:16px;font-weight:700;color:var(--text);text-transform:none;letter-spacing:0;margin:0 0 4px;display:block}
+.sim h3::after{display:none}
+.sim .sub{color:var(--muted);font-size:13px;margin:0 0 16px;max-width:none}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px;margin-bottom:12px}
+.reg{border:1px solid var(--border);background:var(--surface);padding:10px 12px;border-radius:8px;min-width:0}
+.reg b{display:block;font:600 10.5px/1 var(--mono);letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:7px}
+.reg span{font:700 19px/1.2 var(--mono);color:var(--accent);overflow-wrap:anywhere}
+.fld{display:grid;gap:6px;margin:0 0 12px;min-width:0}
+.fld label{font:600 10.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+input.t{background:#050807;color:var(--text);border:1px solid var(--border);padding:10px 12px;font:500 16px/1.3 var(--mono);min-height:44px;width:100%;border-radius:8px;min-width:0}
+input.t:focus{outline:2px solid var(--accent);outline-offset:1px}
+.bitrow{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;margin:0 0 14px}
+.bitcell{text-align:center;min-width:0}
+.bitcell small{display:block;font:500 11px/1 var(--mono);color:var(--muted);margin-bottom:4px}
+.bitcell button{width:100%;min-height:48px;font:700 20px/1 var(--mono);border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;border-radius:8px;padding:0}
+.bitcell button[aria-pressed="true"]{background:rgba(var(--accent-rgb),.12);border-color:var(--accent);color:var(--accent)}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+button.b{font:600 13px/1.2 var(--mono);padding:10px 16px;min-height:44px;border:1px solid rgba(var(--accent-rgb),.4);background:rgba(var(--accent-rgb),.09);color:var(--accent);cursor:pointer;border-radius:8px}
+button.b:hover:not(:disabled){background:rgba(var(--accent-rgb),.18)}
+button.b:disabled{opacity:.4;cursor:not-allowed}
+.say{min-height:3em;border-left:3px solid var(--accent);background:rgba(var(--accent-rgb),.06);border-radius:0 8px 8px 0;padding:10px 14px;margin:14px 0 0;color:var(--soft);font-size:13px;max-width:none}
+.say.warn{border-color:var(--yellow);background:rgba(242,184,75,.07)}
+.mt{width:100%;font:500 13.5px/1.4 var(--mono)}
+.mt td{color:var(--text)}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:4px;font:500 12px/1.3 var(--mono);margin:14px 0 20px}
+.agrid div{border:1px solid var(--border);padding:5px 2px;text-align:center;background:var(--surface2);color:var(--muted);border-radius:6px}
+.agrid b{display:block;color:var(--accent);font-size:16px;font-weight:700}
+.outv{font:500 14px/1.5 var(--mono);color:var(--text);overflow-wrap:anywhere;word-break:break-all;margin:0}
+.big{font:700 24px/1.3 var(--mono);color:var(--accent)}
+.ex{border:1px solid var(--border);background:var(--surface2);border-radius:12px;padding:18px 20px;margin:18px 0}
+.ex-h{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px;margin-bottom:8px}
+.ex-h b{font:700 10.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);background:rgba(var(--accent-rgb),.1);padding:5px 9px;border-radius:5px}
+.ex-h h4{margin:0;font-size:16px}
+.ex .q{color:var(--text)}
+details.sol{border:1px solid var(--border);border-radius:10px;background:var(--surface);margin-top:12px}
+details.sol summary{cursor:pointer;padding:12px 16px;font:700 11px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);min-height:44px;display:flex;align-items:center}
+details.sol>div{padding:4px 18px 16px;border-top:1px solid var(--border)}
+details.sol>div>*:first-child{margin-top:14px}
+.score{display:flex;align-items:center;gap:14px;margin:6px 0 16px}
+.score span{font:700 13px var(--mono);color:var(--accent);min-width:56px}
+.score .tr{flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.score .tr i{display:block;height:100%;width:0;background:var(--accent);border-radius:4px;transition:width .25s}
+.chk{display:flex;gap:12px;align-items:flex-start;padding:11px 14px;border:1px solid var(--border);background:var(--surface2);border-radius:9px;margin-bottom:8px;cursor:pointer;font-size:14px;color:var(--soft);min-height:44px}
+.chk input{width:18px;height:18px;margin-top:3px;accent-color:var(--accent);flex-shrink:0}
+.chk:has(input:checked){border-color:rgba(var(--accent-rgb),.5);color:var(--text);background:rgba(var(--accent-rgb),.07)}
+dl.gl{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:10px;margin:8px 0 0}
+dl.gl>div{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px}
+dl.gl dt{font:700 12px/1.3 var(--mono);color:var(--accent);margin-bottom:4px}
+dl.gl dd{font-size:13px;color:var(--soft)}
+.res li a{font-weight:600}
+.roadmap-wrap{padding:28px 32px;overflow:visible}
+.roadmap-wrap h2{font-size:19px;font-weight:700;margin-bottom:22px}
+.rm-item{display:flex;gap:20px;padding:14px 0 14px 26px;border-left:2px solid var(--border);position:relative;margin-left:4px}
+.rm-item::before{content:'';position:absolute;left:-5px;top:22px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.rm-wk{font:700 11px/1.6 var(--mono);color:var(--accent);min-width:56px;padding-top:2px}
+.rm-info{min-width:0}
+.rm-info h4{font-size:14px;margin:0 0 3px}
+.rm-info p{font-size:13px;color:var(--muted);margin:0}
+.aperc{padding:26px 32px}
+.aperc .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:22px}
+.aperc h3{margin-top:0}
+footer{text-align:center;padding:40px 24px;color:var(--muted);font-size:12px;border-top:1px solid var(--border);margin-top:40px;padding-bottom:max(40px,env(safe-area-inset-bottom,0px))}
+footer b{color:var(--accent)}
+footer .sig{display:inline-block;margin-top:10px;font:700 13px var(--mono);letter-spacing:.12em}
+@media (max-width:640px){.hero{padding:44px 16px 36px}.hero-stats{gap:28px}.mod-head{padding:18px 16px 16px;flex-direction:column;gap:10px}.mod-body{padding:20px 16px}.toc{padding:18px 16px;margin-left:16px;margin-right:16px}.module,.roadmap-wrap,.aperc{margin-left:16px;margin-right:16px}.roadmap-wrap,.aperc{padding:20px 16px}.rm-item{flex-direction:column;gap:2px}.sim{padding:16px 14px}.ex{padding:16px 14px}.cb pre{padding:14px}}
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero" id="top">
+  <div class="brand"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAy/UlEQVR42q29d7wkVZn//z6nUqeb5s6dHJlhBhjSIDCugQzCd10RQQEREAVUWAURQVYJgggCuwoi6CJIEmRFJQ4gCJIkzBB3CBKGGSaHe+eGTtUVzu+Pqu6uqq6+9+pvm1czfbsrnDrnOU/8PM8jdDOjABAELxV+VpHvRnup8MBxHdvm2ir8nxCtx9dfIvK3CO8rROS78KJKxc9J3khFvhOR8devUf9dRI5vGVfkQaL3iI5vXPOgkI2zVOQKjTGpyA3DP6MPqMa7StGBqeaD168lEg+pIh9EfXLrx0UGqMLfhAIlEpMpUsYmgu+jP4nEYsUmW0RWPrqwbe4h2kyHUvH5jXzUmw8qUig5jVJE60DG9UpMWrtdE11TIWLfichECUkLuSkl4oTe7rqN3aPSxyDG/CLOMRiLa4gmEakoETYWIDrIND4RuZtoM2tKtGcr0W0saB7bwoqa1xcChAwP88HzFJ4Hyo9So0qZlWBxNB2kJhrzHLxVk8pjbCQ6ftVK1aNtdDHGPEQPbOz45nzqqdtQJViGEqMMJvIg0YeoT3SU8olSnIpcL5gooQU/eo7CdRTgh8dKzKyks09SmKCR79LJFCRmVqBpAqUENdunPOxRGnAZ3upR7Pep1dwY6zEsiZTg+6AaY4rsBPUP7GqlYhPZsrAxOq7PYWKeRHQHRFenRbCoBD+kdXckeWeS1ajEFlTBtpRa8LtTVSjfA8Aq6MzZPcucXbNMW2DSNVnDyGgoX+FWFbWKwKl6eJ4PCHRDYmQkZl6RyQn0rIHyfSpDLptXurz/SokPXq6yZbUdLqrEyGgIDXxPjb2bSdsZbRYqqhjElAfVsnEUAqGbVlPCpRC6ig5IJe6hEhpJUtOI8T0aFFKndt9VuDUfUEyYbrHzfnkWfDRH1xQTu+Sx6b0a696usuF9m4F1LqVBD7cW3RmksqBMQdI9RWfKPItZO1vM3iVL73Qdu6RY+ZLNsgeHWPlyCVBITcOwRLArVPJZUjQyMYq60/bchKYVOS9YACHSVUMxxoXHUrOiCxLuKqmBW1P4rodmaiz+VAd7HNZBd5/O+nervPFUifdfqjK8xYk9qJASTQ8WLipOGru6fjc/oGrPIVyo4BcrpzFvjxx7HNLJ9ntncWs+yx4q8sxd2ygOOAipYWYEvhdVwqIyTKUsSMpOSZ3HCBtPyC7RYgekXWnUBUjcUaXx+EAg+i64NZd8t8G+J/Sy6/4Ftq23eeHeYd58ukSt4oaLJNHNpABt84C05wRRLdFzFJ7jAz5CSBbt08E+x3YxYyeLN54p8fB1/fSvtdF0Hc0MdmfzPiJuE4w2hrY2TUK5CRc0WICk5qNaheSo5B7lmVEVDxAymMhaxcXIaBz8tQksPrSTlcuqPHFLPxvfrwZ83NTQ9HCy/RQ1klFUSJVUW9MJRgiQEjwPXNsDfCbOzHDIKT3sdnAHrz9e4o9XbKEy5GBm9cZYYnpw49pqdBbUokyq1IdqZUFRgZH8XrSxaknRCAgEbK3ig/L5ly/0cPApfby3vMhDP9/KtvU2oGHmAlvQ91VcyLejtrTxJFlymoaSIBohBFIK7IoHyqN7sskR353Mon0LLL1uM4//ZgCEhpUVeG7U0qbVAh51JyTMeCWSLCgUwiJNT00aUOOnRKlBrewycXaG4y6fCij+cPEm1r5VRki9yW+jKmCq20GkuyCSbhCVsIiimkLSyo6ohyKUSzVboTyX2TvnOP4nU/F8xQ2nr2PrhzWsnI7nJWVCQnOMukRUG2O2ZcyNBRDtDQ6lRlG9ktSqEFKglMK1XfY9oY9PfaOPh6/bzFO3bQU0rJxsTnxMtaKhmsaoP82VkWbIpVq6o/hmEseLkGjsciAnDjt9IoeePpHfX7KZZ+7sx8gYoZBvwxJEOzVWxVX6mG2QZEFpZrZIEcik+26kBo7tIwSc/IsZ9EwzueEbaxhYV8XMGiFPbcM7xiPjY/JFpBg6KfxIjOENTCyWkIQyy2H6Djm+dcsc3npukJvP3IBmaGiaiLNLkaYZqbgRGiWyxCSHWlB7PTXuoiCxEE2KlbqgVvbomqTzrd/O5b0XStz5g3UIITGzGp7rp1jTIlWnFgllqq063FYeqDYLEGWpCX9UzKsKmi6wSz5SU5x280wKvRr/deRqHBsMK9jFow+2jZuCOAHLllVsZ4BEHXGJydeMYPKn75jhew9ux19v3sKdP1iLkdXRLYnnjuFqTqrYDd0zRY2paxPtJl/Q6vFMUmianBPxYzwHzKxE6pJrj/+QlS9W+eGT25HvkdSqPlKrT6pqpQaRojgoEfe4hoTSVEOjhkWLQEyqYU1pXqf8OXtkOe03M7j1zPWseGIEK2/gOYmtl9yWQqT7/dsZNC0UR8p1Ujyt/6xRGcoGoUGtXOOwf5/MAad0c8lBHzDS76NbEuWlPE8b33+TgJo+M6FbIQtSCe0hqVlEhSNxtjNncZbTbpnBf5+8hvderGDl9WDyRWLCw0WOOSNJWIljCcwWNpMQuFH7pZ2QTN5IjcaqArYUsCSHQ742iYO/3sOF+71PtRSwqkCukb7Lx3ge2djqIuHiTUaWFDFvXqDje0yeZ3L6rTP59dfWBZOf05uUn+q0U5FLqQQLaBP4Eaqd26eVjUTd3yLtOJEIkqTtqmQsJLAFrLzBn3+1mad/O8T3HpgD+Khwl8QXVLWyWEVr4CuQAcRVyVQ/e3ybCwme65Pr1Dnrru2489yNvPNcMaB8V7VxRkWDS9HQYBu2FxO2iQPqLDDm+hUJnpxcH9Xej6PayYv4y3MUVt7gvqs28f5LVb552wxc2w+CQ2IUp51ID600F0CMEWlQkWUMffeeozjt1hk8ees2Xl66rcnzUwRN47MS6cEOlUKdLQElEdkZqlW1U61uE9VO4IvIjccTFROqscN8F8yszi1nriPXafGZc3upVZxAKKs09qbaBI5UZAFUNBCT3LOiRdevVWoc/aOplPp9ll6zHitnheY66fp5dAGTQZmG50zFFjmm7USHFTOw2oUVE+a+SETk2saMGdXNDaLhGNRNjau/+AH7nNDLjvt0USu7QWyDBIG0U8fCsct0nqoSAfD65AdCd9EBPex8kMWNp63FsAx8z08hm2bQJZ3Cohatiu8a1bp1VZKVxUhbjarXKtWGvUQt7tEinYrY7lN+oP2Vh3xuPn0TJ/2sj0xBx/cDT0CLUZZ2z/BBZJxfqQRqQUT06sACtHKS466Yyi1nbKFW9ULXQxL2ERfY8UgbiZBd0loU6aomSX07zXoXcS1IKVLtnKgTUakmkYgxN0Bj5/iuwsrrrPjrAG887nDCFTNwbScFLCBGsfBVhAUl38TZgNQCF+6RF03mjScGee+FEaycHoT0RJoSH9FsYhpHwhAS0Vi0aqN2ilGUBBEfb3Jh0lQclXa+Gl0lVcl4ucB3fXTL4M7zN7DdEp3tP1bAqfhhbLvNrhRRuSMiLKgt3iLQelzbZ/qiPLsd3MUfL96CbuqBOS5Eih4vYtssjRoEoGkamtQCR5gQoTqX0HwiPF4Kga7paJqOrmvoevCvputoWvC3lDKBwFApQlGkKhqBQ04iw/HIhuaXphwolArZcqXG3Rf3c9xls4IL+SmCOHVRVXIB0h1HQoDv+Xzu/F4evX4LlREPqYvQo9mGcaqIdzNqY0Qewi6XsCtlHLtKrVoJg+yJ7Vu3GKWkZleplkvY5RLVyNuOfFerlIOJE2leyjQNpy7fNBzHoVYpU6tWGm9VZ1Hprll8V2FmDZbfO4hTcVjy+Q4c20XqSZ6fkA3h33qqNzKq5WkCx/aYt3cHfTMMrvvNVnQrSv2RQININ/dEOCEqpDIhBDXb5sSvnsjxXzyB4aEKvZMynHnmObyy/FXMbAbf85qQFSSe47DLLrvy7W+f2aBWACklCoXnehimwR13/o6Hlz6Ilc3h+z5Kga8UUibcBRHXhKbr2OUSU6ZN45fXXU9nZwe6rjM8PMxxx5/A8MgIuqbFrfeEi14I+OOlmzj2siks+2Ox6ayLOv9iWmIdGmdmlG5llG5ZSjet8N9M8LYsZeYyCjT1zd/OUweeOlmBrsxcJji2fm7jXyu8VvCdYWWU0CwFpgJTGVZGZXJ5BaifXf0zFbxsdcW131A/velo9dF95yrT0pWZCc4N7p9T+c6MAtTDf35IjfXyPE+df8EFClC6lVe6ZalcRzYcb2R84XitcDwzZs5UL7/8cuxay5cvUz29vUpoejAesz6uTPN64dvIZhQY6vtLd1RLjpwYzFM2E5+jxDm6aalWS1g1BYgQAqfqM2X7HJPnmTxzxyCaoTWxNEm8j4jLAt9XdE4w2HmvHHO2N9E0jWq5xDfPPJUzvnUGpRGbtdVrOOTYd+ib8xLf/aHFl7/Zi1Pz8X3FbntlOeBTOv92dB8/vOQ8Dtz/YGq1Wlttvf7b1049mUmTprPbR3V+cetsjjiuB8/xQz29lfJnzZ7DY48+xuLFiymOjFCrBIc89dSzDA70Y1pW8HgyGdVqspL6lR++fiv7faU7LjIaGNZWVUuPeTgTokBooHyfT57QzeuPFbGLbsTiFakOqGgc3/ehu89g30M7Wf1mmVXvbuHrp5/MNT+9nkq5gpnRmWF8i5F1++EXn+aW2+7lsaXvYVgmoHj1+RI777yIay6/m+0XzANgaLDIpZdeSqVajch8gWEYfPuMM+md2MuUKdNYvvx5jv3SkfzgW69RtXU0QwaBlJAHB5NfZvqMmTzy8MMsXLiASrlMoaODVSO/48W/vMDrf/87SmmAj+8qfC/Q8zW9NY7h+wrd1Hj14WEOP2cScxbnWfVqGcPSwsB+Gx2nwXrMTJP9JLbZBU/uqKbvVFBCmMrIZOLb2IqwsPCzYWWUkckoM5tRQpoKcgpQxx1/rFJKqVKprDzPU1s2b1YffLBa+V6w5b/ylVMVoDK5vMrkCwpQ5194kVJKqUqlorZu3ar2P+AA1UZxVh//xCfVpk2bVLVaVUopddEPL1GAsrL52La3cnmFkGrq1GnqjTffVEopVa1WlW1X1Yr/fUOtLy9Vv3/4UvXv3/mCsvKa0nRLdfXl1Mz5nWrClLzSDStkSVG2bSkrZNefv2C2Ov6qWQo0ZeXSWE9zvmRMhVQRV7MEt+az8BMFakWfdW9WA/+3rxIww3hMVdNE441SFDotJswo84UTDuK/f/nfVCsVDF2jXC7zmc9+lpdfWoaQCs9z8VUtEbyGaqWM7/tkMhmWLn2IJx5/nHxnF1YmB5iAiZXJU+jq5tlnnua+++/Hsix8X1GrVRsg3/pL0zRq1SoTJ/by8MMPsdOOO1Iul7Esi6+efCq/ueU3TM0exlGf+g/Ou+REdvy4QjcFex7axWW3b8e/nTQBz/UTBld9F4AQGs/dvY3tl+TRTQ3XjTodRRzmHcsPSPhpghv4LP50ByueGAlVwRQAb8hvnKpPrexgl2tUyzWqJQepGYwMjrD9jCVc/1//g2FYgbrnunz2iCN47m9/o2dCb8ASNL3F0KlrOVLK2GfXcUD6HHnWThx97iKE7uLUnPC4+nkCEfpu6tfUNI1azaarq4ulDy5l1113pVQqkcvlOPd73+P2225lQs8EFD6e53L1BS/gVSQ3vbSIx+8Y4KsHvM2dP90SyEG/lf0qBbolWftWlWrZZ/5H83g1D6G1R4/p7UxkzxVITWfGIpMnfxMgGhqBhyi+Rgo812Pmrh0sOrgb01ZMMmH1yiqP3rOBvfbemwfuf4DOrg5838dzPT5z+OH85bHHgsl03TFQ30nB7mNXHL5w7i586/IlCBTZgsXN57/U8M+nnappGk6tRkehwAP3389ee+1JqVgiX8hzzrnncuUVVyClxPd9BBJNk1gZg02rPf5y2wBCECC2hUDEMD7xqJfUBCiP95632e2gDt5+ahgpNLw2yHKZ5q8QQuDaPlMXZNDQWPeWjW5GfD6i1W+TyUsmbZdh4myLeQtyZAoVFu28K0sffICenh5c18X3fY448nP85bHHyHV04vs+bTFwkhB67oWLFDfiMjmdKi4VfHSLUTxp4eQ7NXK5LPfeex8f//jHGpP/H9//PldecQX5zq7AbgjP932fWXOmsPlDxU0/3oDUAiCXqGszKiWIISCgUcmKJ0aYvWum4UFND3bVd0ACPBrsLI95e+bYtNIJfB45rYmXjBpdPmiGxrvPDfPuc9tCD7fDzBk78sKLDzNhQi+e56HrOkceeRSPPPwwhc4uPN9H07QGxSqlGp+FALukAs1C5tF1vRmsB6yswd1Xvc6en5qGbknuvPQ1rKyJXXHjWUB+AJFxHBvLMvjTn/7AfvvuQ6VSIV/Ic/HFl3DZj39MvqMTIQSapiFFk91pMnB15DosbNuNGIcJ/1WUfn2QmmTVK2X0fC8dfQbFfg/NkAhR3zsiERFLYGpEePGZu1qsfKmY8GvEXayeq/CcwD1rZi10CxbusJDnnn+EqVOnYts2g4ODHHjQwdx3370AFIeHqBRH8DyvwYKEEOihTwels2BPi0OP7WX52/dy1FFH0b9tHZlMNoSMSMojNuXhKtWSTWmoiqa3urU0PbBe3VqGe+7+MwcdeDDlko2maXz3nHO48MILACiNDFMcGsTzPAZH+gG49tpr+f3dv8d1PYa3DWGXS3iBlE0Ec8LdEL6VCoR2echleLPDjEVW4L6WEbRHix2Q8F8HuVaS3lkaL9xdCbaR39xmQgg8x2f+7jn+9cgeqjVFRldUijV+e30/c+bMZOvWAXp7+9B1nS1btnDM0UfztVNPxfXcRhzVdZyGILzxxht55pln8DyPSnmIUqXASFWwYOYsPrroU2SzhcZiea6PblhMntWJnlGYGStEPtNgIQDDw1W6J8CXT96dQw6dxED1CfLWbhSHBNvPn89tt92OrxRK+QjAdV0WL94d13U56qijWLJkCZ8/6vMYpoFt25x/wYVs3LAB3TRRgRRuxcWqOnxesfFdh5mLMrz112IizNoEOOhJ961A4LkKK69hZASbV9oIKWMZL3Uv4Oq3bG76r80opdCkwKn5zNkuw15LuqnVPKQUVCsV5s+fz0477ZTK6l3HoVarcdJJJ6EUPP7E45iWxTNPLePZ//2A/c5bzKmnnhIc67nhOYruyRZ9c3NIE3qmZtn6YbUx/vqrXKkwbbbGrnuu5tcPHMlBh+yDsCeRzy3k1FNPbeunt22bSX2TmDJ5MnvttVd47xqX/vhHCOGjaQJPiRQ8lohN5/q3HebvnQtzYWiRF01UREJr8BxF91Qdt6YY6ffQDBFSViRiJYKFGh50KQ55DA642FXBildGeO0Vl5133hHTtOjo7MQ0zVFxX1LTyGQynHHGt7j3nnv4/V13se9+S5Aa+MJuUL7v+4FTTUEmZ/DG05tZ8deNmJmmylpfJIC5syfz5iseF3wnxwE7PMYc8xf05BdhZfVRxhP8V3NqAcsBcKB/fZnNG0r4HlRLLq6r2gbv69xi8wc1OnqNiCButaH0FjhiuH26p+lUhtwG/woUFtXiLda0Js1JqZCaZGv/Vq648kqKxSK6pqNCqHockCtxbZsvn3QSCxcuBOCOO+5g2bJl5Ap5Xn39NXwvMPHrsdauzk58X5HJS7asKXHuQX8BwLSCnK9qyad3Qm9ARJ5HsWgjBGRyLnfcdQMjxRGE0CJE1MzEFEJSs2sceOCBHHTQQQgheOH5F/nD/b/n8LOn45rb+OZlBVzbwjQUd/xyGx++5wbEqVIgqUIyuMFBz3hILXSDpLnHY55M01JmNqNAV3sf1ae+eMVMBVrE+xn3dsbcEGbTG9rOVZD2fvzxJxrexy8cc0zkN0MB6qyzz1ZKKTUyXFaO46hzzjm37bXOPvts5bquKhVLSimlvnfeeaFX1Br3eC6+5EeN8fznf/5UAapnO6m6t0PN37VDLdy9S+2wuFN1dGeVZiS9q83PmmGpbGdWnfE/81W+O6OkbjU8qjFvajz7o7kDOibolAdHARinZH3XWZSZySI12diOmQ6NuR/NhjtQoUlY+1qNgXVFli1fxsc+9i/ouk7GymBYOh85bDLlwQpvPlvitltv54tf/yQfmXcQtariJz+5nEMOORjbthEIhBS4rkcmY3HQQQfhOA65fI5H//IYN/76Zqbs0MGCT3bw/K2DAYotGh2Ugll7Z+nulAys8vhgxTArV73H1q1b6O3tZcbMqWQyGYZX6/iezyB2U33URWh0JbL96ylZMoC6+64i0yEpDXloWhQ6GQ3IqFZGlu3UqAy7yeBkJNAu2uAsFb4C33ERQuB7wd9GPlSSlUAKhY+L6ymefeGvfKP2NV599VXefONN9KzGx44rMLxG482/ldmyuZ9LbzqGrx9/EYfscA7F4ggHHnhgKv8uFosUCgVeeuklPvNvh1OtVjFLFi/cMYCvFL4TT2OSmmCHf82x/fYmr9w1xLuvelT5OzVnmHfeGeTpZ54AIZGGi2ZE7NZ6nkAyKSRRKsF3fVwHzLwE5TZ9QVGLOOmpCwIwujri+zPV/l+dErCgbCbhMY2wowbrsVq8ovW31C0FeshWgn81PasA9WbojVRKqW+cdlrICoLgRsAScwpM1dM9UT311FNjBmSWL1+uJk2arKRuKCubU7ppKS0WaIp4JE0rHJOhpAw8tn/4w58a17rlllsVoLL5QivraOfhDINZQYDGVKfeNFvN2r0QBKQymUTAK6P0drqAphNB/iYQziItQUG0yQ4JVFbd0OPalg9Kafz82mtZsGABAK+88gpS0zAzEj9MN/U9Dyuvs22on89+7kj+7dOfxvO9ICSpFELISIBcsnTpQ2zZvBkzm8XzvFjhkzQskpHVGh4Vx9b53V2/Y/WHq5BS44UXnkdqWnCdtIBySyxFJKYlSIHSNZGOulCqNUdM0wV22eHIC6axba3D4zdtxcyG8JMY7iYNkj0aHDgFfigErl2NW4ZWJjXpToSOO+U6o2PYNB3DMAI/UypsvU3pBBXUmHCqaeNJyYNLlqtRcdCZlEGC4tdvnsbD1/Sz6mUbIxPR+sMPejLJrP67Y4ORk+kogogjSkQD0wSqpqoH4qP+nQiASwqBCs/J5gsN1JsfHh+dNxWRM6ZhIC0r5hequzFUSG2e7wX8ORIsj05SI5ooo6IvmHzlg5XNIbUg7uErhR/utgYKWjYnT5GExYsWf5swoFZVrcmN4QLqrViZcAEqPrkOrb0Vp4hQpdv0bxtGEB+w7cZnIQROrYYM1IDAnx8ukCMEppXBV35gcDVqBoSLZRhIKXHsGtHYnpHJBIvtq4YbooljEmhGQDxO1YtoLhJNDxQD1/XRDa3xLJ7ro+kS1/XwbRfdlI08Yd/3kbrEqcXHZmS0CGQykb4f5k+YGUmt7LcCw8LF0luwmqFPqDToMXGW0YrnbCy2xHEcJvT0BAaSCgLpGzdtQvk+02fMYNPmzSFvtZk0eTLlSgXl+/TNnIkfekMdx2Hth6vRTYtJfX1YltUIpgBs6e+nZttMnTYVyzRRoUW85sPVaLqBmTHommHgeYERKAC77DGyzUb5MHluIZgMIRjeVqM8ZJPtNCl0mwxsrIRsV1LoyVDcZmNYEiunM7Slim4EVVoMU6M87NA3M4eU4W5Tgk2ri2i6QGgyZtxBsMiZgsQ0NKrDAVpOqdZAhZ5MRqgfs22jy877a4EZncBeBuqly8QJPdx0440sWLCAaqXCpMmTefiRR/jKSSdxwfk/oFKpcOYZZ7Dr7ov57a23sO/+B5DJ5XjkoaVIKalWq/T09PCzn13NVVddyUf2WMyvb7iBocFBFGCaJiec+GWWLXuRxx99lGwuS3G4SG9fLzfd9BvOv+AHSKFz+nV7MGeHPoYGi/QUcjx572pu+O5yPnfWrvy/k+bg+gJL01n1wVauPmUZyhOcfeMnuPIrT7PlwxH6ZvZwzm3/wtn7PML2i3u5/L4D+d5nH+d/n1zDp07ZgR33nsZVJz7OIV9exOGnzmfLpjK9fTme//OHXHv6SyFXVg0wmhDguorCBA18KA/5obdWxYm9GQ9IykvJwFqHbI8MeLcXB9QKKfHsKjst2plqpcreS5YghGTnXXbGMoOw46WX/phlL77IL669lh//6BL+5+4/MNC/lVkdc1m1ahXHHPclhrcN8NkjPsdFF13IVVddia/gySef4sQTT8TKZZFCUi6XyeULuJ7LfgccwKqVK9l9jz14eOlSLr/yJ4wMDtG/3uOOHz7N35dtIZMzAjQHku0/luVX577CW89txXM8zrr5k8xf3MeypR9gOxUMU4Ys0UPoXhB/yOhITeffr9ud03ffiGYYeMIOWZvG7/7z7zxy41t0TMhx1V8PZoe91rDimY0YGaORdB6EFBQTZ5pUiwGqUDcDzS6e8tXwhkaL0wikLuhfY6ObUOjVGwGFZODGc11mzpzJ8NAwZibDs888C8rHyuX5cPUqLr7kEp599llee+01Lv/J5QipkcvlWLJkCQ89cD/VapU5c+Zw7733ATBpUh+HHXYof37kETo6O3j0scc477zzgByGYfCrX/6Sbf0D5DsKLFu2jGq5gmZkmL/HBBZctyfDgzbKV/z05OcpDVawrByZgs7IQAXQ6ejVqBSrSM1k0vTuEJ4CmZyGrlko3yffqfHnP7yF8AxOu2YJLz25hu3FBADm7NTJy3/ZSGnYoTRcZNWKYQyrXb0IxdQFGQbW10gvbRAsgh7fFqENYAiqIx7losuU7U3e3VIJZIYfz9cyTZNiqQgoatVKc2E8D920uP6Xv+Ssb3+ba35+LY5tgwhiritXfsA3v3UG1UqZ/Q84gMMOPTTUjiTLli/nO2edRS6fZ/2GjQ1NqlZzePTRR7GrNtdcczX77LcfTq2Gmc3i2DaP37qWte8MIHVBdSQgNV/5DG2tF2mqUS15GJYBQqNSselfX8RzPbaur1BzquHYfXIFiyuP/xtXLzuYuYsm8OZLmwLgl60oDYXhUVzyE7RmgCYlH3DaIp3Vr5ZTkgVVAhsaTSdqaHCKLe+7zNszx7vPlRBSovw4aqFULrNo0SJ+9atfBTHUWbN4+plnuPyyy8jk8lTLJQYG+hkaHmr4aadOncrChQs45uijqdVsdttttwbqQdM0dl60iC8d9yV00ySTsfj5tb/gwzUf0tPTzc233MLWzZvRdJ1fXncdu+2+GKUg32Wy/JG1bHh/ANDRLR2Q5HMZjj9vMft+bg4ImLmwl6GtNqal6JuW58xffYLKSI1chw4EGp9hSTr7DGpVm+tPf53fPPlpPnhnSxAKzWgc/Z2F7PSxHibNytM9JcuatweRmh6zDwITRDJ5rsmTNwVhWuWnJKIIgSY1/aJkkECEvv5sh84uBxZY9qchNEM2ygwE7mWd9evWsX7DRrq6uxgZGWHz5i2sXbuW115/HaREIBgpFXn99dcZGSkipCSfz7Nly5YgyCMEH65Zw48uvZTh4RFK5TKVSgVN1/E8F9d1WbZsOYPbBhkeHuKtt97G9Txee/11SqUiK954A8/zKA26rHl7CLcmwskPXmv/XiSb1alWfDzX5/E7VvL6XzehlGLzqiq5gk55xKE64nLP1X9nYGMZ35esf3eY9e+V2fjBCH9/Z4APXhti48oRykMeblVRrfoMbylz8/kr2PDeCLqlNWyPOpR/4myTjxxe4M+/GECE2lkyW5RYybKI/lqHYHRO0jnzztlccfhK7LJqYisj6lbSkm1Yj6Fh5NhV0PRGYN2txfX5OghJN03cmkMo8aOmLbqh49ZspGEGaGil8Go2mmkFocSai9T1MHu9+aiu7QJuDGqhW0Y47hrx0mfBznFrHiiFbuqhZVwLzjN13FryejqGpccqvgS50y77nDiR+UssbjptLWbOCDwJKVW29NY0/0AUGxnB0MYag5ttFn4yx6sPjqDXAUmR461svpEXJQDHjVcqzOTyIUw8sJBNK9CSRCR+6/sK3/cxrADAG8WY+p6HUopsoQPP88KomMTIF/DcwEdj5szQtxRPmDazBkKaEcs18C8JIbByVoABkgIZyiblg2npQRaoH/iXrJzVKDJiZnWkNBv38X3VtLoT+b+7HNTB8nu2xTN4Uiqo6Ok5s80/XvtziY98ppNXHxxuAgJoQjI830O5fmOyerq7GRoZQQqJ6zq4kQQ7ISQuCs33g6C2CMwtz/PRNNmwrOuCXEqB7/kIKXGKI4HWYpq4rovrOOFjCDQlcWs1hK4hwsmsayMB1ETE6sC5nodQio6uLqqVCrZdC2Wc37imkAKhFDU3dKOEC1/zXaQIgFsqEV4M8FSKrikWE2ZK/vexIlIPiTZZGUA0fEHp9Q18L4jVvnz/CPue1E2h16A86AdBjYYsCWCC06ZNZcb0GQwODTFt6lTef/99OjoKgKC7u4eNmzYihWDixIlUq1Us02SkOEJ3dzdr1q5j/nbb8eqKFQxs3oyZyeC6LjvusAN2pUI2HyRa9PVOxLZtbKeGZWVw7Co+Ass02LRxE32TJjE4OMjEib309w/Q19dHqVxGoHjl1dcQIaxRCMHee+7J5s2bmTdvO95b+QEd+TzDxRGk1Ojp7EAzTAa3DSCkRjaXozg8zJQpk1mzbj3z587h7XfeZf3atRiWFckSCmpK+LbHXp+dwJoVZcpDDlbOiKTwRjBVSrRJ1I6kFBmWYHhzlQ1vOnz82B58zw34bLjlRAh+6ih00NnZwfRp06iF8D/fV0ydPo2erg40AT0TJtDV1UWxOMLg8DAK6O3tRdM05syejS4Fnd3dDVbVO6EHoetM7J1IT3c3c+bMIZPL0d3VTaVcZtr0GfR0dTFp0mSQkh0WLmDBggWYus7sudsxedIkJnR1kssVsEyTjkIh2HVKUcjnmTN3LgJBJpPFNE3yuTwLFyxg0uTJTOjuxjAtcrk8uhDMmjWTyZMmo0nJ7Nmz0TVJZ1dXKzbUD4zUPQ/v5Nnbh0O1e5RaEQJEEC9NT6WUIijAtN2eOb505VR+dND7QXC9WXYU3/cpFAp09/TQv3UrXV2dDA0NM7Gvj61bt4LvNwBNUghKIyN0dHfjug59vRMZLhbxPRfX84OdMVJEKZ+engnouobrukhNpzg8RLlaoaurm6HBQTo6OwHoyOew7Rqu72NoGrlCgW0D2/A9h2wuj2WabBscRNd1SuUyKMWkyZOpVsoUOjoZHhqio1CgVKmQMU1GigEQLZfLBk7AWg3NNNFEALHxAadWw7Ks4NhQAEspqFU9Fh3QyafPmshP/vV9jIyeXos06rsLg+htXfhBZrzLd++Zx7N3DvC3uwYxc1qQAxVeyPf8YHfoOr7nITUN33Ub3s8AVxRQtqZpeG4Qrgz4vAwwEkLgK4WmBQhnz3VjrmhNSqQm8VwPTdMCPo4I3MUyUPP80H0pZWAgqVD4S00LQ5ABIsJ1nYDne36IWPAbMqCeZVmXI0LIsHhtEJMgOlYpG+xEaOBUXL7zx3k8fXs/L/5xKJgnd7RKiqC3rZ8Ty5KUPPCfm/jiZVN5/u7BYKtFEI2aJtF0Kwy4aygUmmXFtA+ECF3pISYUMMKJqR+jRVY+UFubZXJUCIM0TD1AxoWLq+nNa2jhfZoxCBn7u/6shhlqRpoeRv/02N8qXPD0pgohmqQekwhzqGtVjx337STXJVh+7xC6FRJpMlij4jAgORr115MOjIzkradLDGzw2P+rvThVJ8C8x6rLhNBA5UcATs0hpxVEiS1QJIQXe1RVT/8BKyuxy06QIkuzIno9cKNQjUmJljcQkcCNIHJOfZRKER2JCAWcah6BUn48X1+11jI54j8m8cB/bcb3AixVS6GOaHAoPEe2NFNIya6vQxH/5/xNHPyNHvI9RrC1ZMpIQgHtOyrIq3IUvhtQr+82P7uuCoC9je+bv9W/c13VGJpmaJx911z2/dIEamUvCMK0K8IUrqCfuEfr/eJj8xrvAB1YPya17Eo9010XOBWXTx4/Aafs8cqDwxhZvZnAEa1blJJqHC9bOQpgLyjU4fD5i6fTPdXkhlNWYuXMQMVKVgaXgmxn4MoOiFi1diQIjYpGvSghGrihqEukVvZxbR/fU8zYweLoC2cyuLXM7y/ewvBWF92Mb/F6fU/NEGQKWsviqEaETzSoP8qCRST3uT6u6ogXL8XTiFMH1bIyHZL/eHQWPz9mLZved0K3DaOBqpIJGm0y3SOQdN8DI6Pzpx9tZvYuGrscUsAue2FGeGtLD6mDZgRv3RBoLe8Q3GQEWYeaLsLjAxdx8F0zdit1yeoVZd56doQlh0+ke0qQW2CXXOyy03hHy4fV79G4X/36ZngvPQhd1senG5ExhG+ZhhuJ+P3dmsuXr5nB83eW2PBOJcijiwXxFW1ZC43a0eMomRMCmWpVj+0+kuWM2+fxg4+/TXnYawSxo6Anz00rLyNSijElyp+LeEMFqQcxZSF9zvrtfFzH57pTVlEZCYzCw06byvTtLTwfKkWHe67cQKUYgHib1bsS9e6Smeuj1i4Lkg+FjBcxqft8PnF8L584toPL/99qzGzdVaNa6iy1K5yit1YRSWnloepxTjCzGiuXl3nshq2cfut0Lv/XD9F0FWpEzfM1o7UWSN3MryMYomJPtKAumvPheYpcQeexX2/hpYe2IbQgVuvWfLastvFrPp4PtaqL56oG662zJxUDrafVDpPxunjRYul1vUgl2bHHtB0zHH7OJC479L2wdkZ6XttosJ3xyYBEnehgADXOvHM+W9eXuf07G7DyZkBxyeriKl4hqiX+IEapyBvFcfngOR5GJtDl/XqSh+3GyEwz9IbsAUYvPN5SvUS0rfHcKDUsBcpTaCb88MntufP763jtkWJT52/zDO3mdRwLkOyg0awK5XseFzwxn+d/P8RDV28kU7DCjhiitc7zqBkCIr3ce+LEJky+CaqSMu5IjDu+RqE+NQZ1JvT1ZqMphVP1Ofe+uax4fIQHf7Y5cDe746xHmmhuIVN1zuTn6MSIZp1MpQRXfWY1+5/Uxf5fnkS1WAtjx9HyMGqMASUS3UapIe37tGBvAghjUEwvVk6Y0TMnU2s+pygfjfTp0C5zqh7/fsssNr5r8+DPNjV9/SK9Q0Ya8DlqqGhS0y5qARVF+4q1NJZpCjFNl1SKLi/fX+Jrv5pOrezz3ovFsOGOaK0nkWZ1J3uGtZNYIj3Recxj0ouHtj9PtMZuhQyIybFdTr1hNp6juOmbazCzZmRHijZ1l0Rrg6RIKThNasZFTUMh6qZLGXuiNn5QPVBSHHBYds8QJ183E92QvPX0MLqptdYREilVpJRou3VHbd31zzZgS/PJqHYCM5B3gWHmc/otc3CqLr/+xpqgnL2itfWhiNfZa058ehXf9IpZIm33RgLKkZoHvqcwcxr961wu3Pc9Pn5MNyf+dAa1ihumr5JehTCJk1etLRXVKGw0dfJV+hFt10WMonTUi5JXPKwsfO++eQyscYJKkeHkKyIF/xKKhki7Zope2mzik0AjpzZAaFscO1DNHNtHSsU3fzuLbKfGz7+0hmK/i5XX8N1I6cnUEvSqfYOcMduopHgcxyMI2wjieoGPWtll1q45Trl+Bk/dMsCj/70FI2s0EQ4JoPKYbU1StMqmITaawdDSL4aU1oUqwD96CrfmccT3prDP8T3cfNYaXntkBM3Q0QwRKeWVxor+AQ1ivJ1LGV0Pj3fRC5IO7YoC5XHAyb3sd1Ivd563gbeeGm5qO0lbaVz9JGnt/BqzAxjvA41yh1i5d4eFHyvw1atn8u6yMredu47qiIeZ0cOiGwl9+x+ezP/DV7iDfU/h1lx6Z1oce/lU8BU3n7Ge4oCHldNCy1qM0RQCxq3WM1YLk7ZUM/ZkaTrYJQ/Dkhxz8WR23r/AQ9du5a+3DjQzUyBiurdZgXZtVEYrFT/W+CJGoNQCJIxju2iG5NDT+9jrs5385cZ+nr5tAKlp6KaIJKgwSremFNk22vypdpaw+meosbU+p9RE0AW15jJ39zxHXzgFKyt58BdbWX7/YIByMGT4gBH3uWD8DzHGcFpaOYp6C6ugo5/neiAlnzimh09+qZu1b9rcc9kmRvrDXmJ+PEkkbrGruI9r3N0Gm+Vu4izo/+8itDRlCKEhOtiloDvRHp/q4rDTepG65Kk7B3jhnmGqxQA2oFsa9SDZqM3cUj27qrXvWYQb1JvzeJ7CtQPlPdtp8NHPdbLk8B4GNtZ46BdbWbOihNR0dEs0XQuI9E4iieyicc9XXAgnmnmOo+tDS9OKcaSE1bXXWiWQwrvsX+CAEyfQO9Pk3WUlXrx3hHdfLIWFwKPtZ+Nxg0ahklFsg2hlMN8PoIJ1+IjUJPP2zLPHYXnm7tLBunfLPHn7Nj5cUQYkZk6GKDaRSEwR6UoA42npnlK9VyS7KKX2Eib1pLb9xsbagiFbUoBTCaL6k+dafPSIHnbaN49uKFa/YfP2s0FDz/41DuC1KO9CigZFR90UzYpe0VCgZMJ0g1m7ZthhSY7pC7LYFZc3nirz0tIhhrcEu8/MBUEU5Y/DgadUen+E8Tj8Egs5DiHM6AWtR2tuOcrWrMe8a2UVTrJg5qIMO+9bYP6eWTommzi2y8B6h82rXLasqjGwzmWk36Va9KlV/cC2CIPihhVEwAoTJD1TTCbNNpg426Rnso5uSPo32KxcXuHt58ps/sCm3spWt8ToE/8PKoKjGx201FdN6aI0jqun9Q8W/5wOWTd6lA9O1W8AZs2sxpR5JtN3sJg8z6R3ukW+S8fIgCaDWv2eq/Dxw7wRDd/zqVUcStsUg+sdNn1QY/07VTZ9UAtAt+GOMLPNMgpqFMzO+G0SNf4GPq0RMUu1GkLpZ4uxfZv/rCIes0CBwP9S82ktAy8xrCB8WO8t7HkKt6Zw7fTuFboZBM+JCvdx6ezjeH41CtcYh3HWyoL+L40hNY6urKRjZqJV8GN5w36TcmNORtGUC1GNsQ5daTgGIT3iJ/5PaWmM52wGrfTxW8DphszobGo0uZKSNyWi6AWShRLjcA4hUi+p1Bh+VTHesOE/yIqT7WtHE8giup/H7W5MuthHaU04VgObdr+pMcYyWi+Y8Y59TMJKuEqT/b9iHE60tkpR45DgkVZeclycXY1jkyRbjgiRTo7J7hbtAGFKjb6jWu6t0mFr4wkwMAYfb/kypdpwcvKTBKkSBkyjmWea1tMmOKXGCl0mPwuRTp2qTVQrre5CMpjTru9kNIjUzqeUvL9So+8gkUJYyRKejdClaNetpSmYVGuUUba0cBqLMJL4HdIMNDUGWxsLPSBGlxtqLHajxmZjSo3d3iR6Umzuks+uxsd26la1iDRHiiMYRp870U4XS6taFzPjVWr8tzVSpeLU2oLrEq19L9NaaLUI6OgEJnpOKpVosZUWOUyoVdGWuUTsp0bKdRoIND0kF/cFJalTjWHVjWVhtZMBsUhW1AWixhIuY2jlKV44GB86A8GoPE6M9/FF+yhdyjj+P0FbsL5O3GdKAAAAAElFTkSuQmCC" alt="Logo 404 CyberFound"><span>404 <b>CYBERFOUND</b></span></div>
+  <div><span class="hero-chip">🔢 Fiche 0.2 · Niveau 0</span></div>
+  <h1>Binaire, hexadécimal<br>et <em>encodages</em></h1>
+  <p class="sub">Comment un ordinateur écrit un nombre, une lettre, une image ou un secret. Ces bases servent partout en cybersécurité : lire un fichier octet par octet, comprendre une adresse mémoire, repérer du Base64 dans un malware ou une requête web.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="n">13</div><div class="l">Sections</div></div>
+    <div class="hero-stat"><div class="n">4</div><div class="l">Simulateurs</div></div>
+    <div class="hero-stat"><div class="n">6</div><div class="l">Exercices</div></div>
+  </div>
+</div>
+
+<!-- ═══ APERÇU ═══ -->
+<div class="aperc">
+  <div class="two">
+    <div>
+      <h3>En bref</h3>
+      <ul>
+        <li>Un ordinateur ne manipule que des <strong>bits</strong> (0 ou 1). Huit bits forment un <strong>octet</strong> : 256 valeurs possibles.</li>
+        <li>Le <strong>binaire</strong> utilise deux chiffres, l'<strong>hexadécimal</strong> seize : un octet tient en deux chiffres.</li>
+        <li>Un texte devient des nombres grâce à un <strong>encodage</strong> (ASCII, puis Unicode et UTF-8).</li>
+        <li><strong>Encoder n'est pas chiffrer</strong> : Base64 ne protège rien.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>À la fin, tu sauras</h3>
+      <ul>
+        <li>convertir à la main entre décimal, binaire et hexadécimal ;</li>
+        <li>expliquer pourquoi un octet déborde et comment un texte devient des octets ;</li>
+        <li>distinguer encodage, chiffrement et hachage, et reconnaître du Base64 ;</li>
+        <li>lire quelques lignes d'un dump hexadécimal et repérer un type de fichier.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SOMMAIRE ═══ -->
+<div class="toc wrap">
+  <div class="toc-title">Sommaire</div>
+  <div class="toc-grid">
+    <a class="toc-link" href="#s1"><span class="toc-n">01</span> Pourquoi des 0 et des 1</a>
+    <a class="toc-link" href="#s2"><span class="toc-n">02</span> Compter en binaire</a>
+    <a class="toc-link" href="#s3"><span class="toc-n">03</span> L'hexadécimal</a>
+    <a class="toc-link" href="#s4"><span class="toc-n">04</span> Convertisseur interactif</a>
+    <a class="toc-link" href="#s5"><span class="toc-n">05</span> Les limites d'un octet</a>
+    <a class="toc-link" href="#s6"><span class="toc-n">06</span> Le texte et l'ASCII</a>
+    <a class="toc-link" href="#s7"><span class="toc-n">07</span> Unicode et UTF-8</a>
+    <a class="toc-link" href="#s8"><span class="toc-n">08</span> Encoder, chiffrer, hacher</a>
+    <a class="toc-link" href="#s9"><span class="toc-n">09</span> Base64 et autres encodages</a>
+    <a class="toc-link" href="#s10"><span class="toc-n">10</span> Opérations sur les bits et XOR</a>
+    <a class="toc-link" href="#s11"><span class="toc-n">11</span> Côté cyber : lire des octets</a>
+    <a class="toc-link" href="#s12"><span class="toc-n">12</span> Exercices pratiques</a>
+    <a class="toc-link" href="#s13"><span class="toc-n">13</span> Vérifier ses acquis</a>
+  </div>
+</div>
+
+<!-- ═══ MODULE 01 ═══ -->
+<div class="module" id="s1">
+  <div class="mod-head">
+    <span class="mod-tag">01</span>
+    <div><h2>Pourquoi des 0 et des 1</h2><p>Bit, octet, et pourquoi tout est un nombre</p></div>
+  </div>
+  <div class="mod-body">
+        <p>À l'intérieur d'un ordinateur, l'information est portée par des composants électroniques, les transistors, qui n'ont besoin que de distinguer deux états : le courant passe ou ne passe pas. Ces deux états sont faciles à fabriquer en masse et à lire sans se tromper. On les note <strong>0</strong> et <strong>1</strong>.</p>
+        <div class="cards">
+      <div class="card"><div class="ic">💡</div><h5>Le bit</h5><p>La plus petite unité d'information : une case qui vaut 0 ou 1.</p><p class="an">Analogie : un interrupteur, éteint ou allumé.</p></div>
+      <div class="card"><div class="ic">📦</div><h5>L'octet</h5><p>Un groupe de 8 bits, l'unité de base pour ranger les données (en anglais, <em>byte</em>).</p><p class="an">Analogie : huit interrupteurs côte à côte.</p></div>
+      <div class="card"><div class="ic">🔢</div><h5>Les nombres</h5><p>Chaque bit supplémentaire double le nombre de valeurs possibles.</p><p class="an">8 bits : 256 valeurs, de 0 à 255.</p></div>
+    </div>
+        <h3>Combien de valeurs avec n bits ?</h3>
+        <p>Chaque bit supplémentaire <strong>double</strong> le nombre de combinaisons. Avec n bits, on obtient 2<sup>n</sup> valeurs, de 0 à 2<sup>n</sup> − 1.</p>
+<div class="tw"><table><thead><tr><th>Taille</th><th>Valeurs possibles</th><th>Plus grande valeur (non signée)</th><th>Où on le croise</th></tr></thead><tbody><tr><td>1 bit</td><td>2</td><td>1</td><td>un indicateur oui / non</td></tr><tr><td>4 bits</td><td>16</td><td>15</td><td>un chiffre hexadécimal</td></tr><tr><td>8 bits (1 octet)</td><td>256</td><td>255</td><td>un caractère ASCII, un canal de couleur</td></tr><tr><td>16 bits</td><td>65 536</td><td>65 535</td><td>un numéro de port réseau</td></tr><tr><td>32 bits</td><td>4 294 967 296</td><td>4 294 967 295</td><td>une adresse IPv4</td></tr><tr><td>64 bits</td><td>18 446 744 073 709 551 616</td><td>18 446 744 073 709 551 615</td><td>une adresse mémoire sur un processeur 64 bits</td></tr></tbody></table></div>
+
+        <h3>Tout est nombre</h3>
+        <p>Un texte, une photo, une chanson, un programme : sur le disque, tout est une suite d'octets. Ce qui change, c'est la <strong>règle d'interprétation</strong>. Les mêmes octets peuvent se lire comme des lettres dans un éditeur de texte, des pixels dans un afficheur d'images ou des instructions pour le processeur.</p>
+    <div class="tip"><span class="ci">ℹ️</span><div><strong>À savoir :</strong> Les unités : 1 ko (kilooctet) vaut 1 000 octets, et 1 Kio (kibioctet) vaut 1 024 octets. Les deux existent : les fabricants de disques utilisent plutôt les puissances de 1 000, certains systèmes affichent les puissances de 1 024.</div></div>
+    <div class="info"><span class="ci">🛡️</span><div><strong>Côté cyber :</strong> Savoir qu'un fichier n'est qu'une suite d'octets change la façon de regarder les choses : on peut examiner n'importe quel fichier, même inconnu, octet par octet. C'est la base de l'analyse de fichiers et de malwares.</div></div>
+
+  </div>
+</div>
+
+<!-- ═══ MODULE 02 ═══ -->
+<div class="module" id="s2">
+  <div class="mod-head">
+    <span class="mod-tag">02</span>
+    <div><h2>Compter en binaire</h2><p>Les positions, et deux méthodes de conversion</p></div>
+  </div>
+  <div class="mod-body">
+        <p>En décimal, chaque position vaut dix fois la précédente : 1, 10, 100, 1 000. Dans <code>347</code>, on lit 3 centaines, 4 dizaines et 7 unités. Le binaire fonctionne pareil, mais chaque position vaut <strong>deux fois</strong> la précédente.</p>
+<div class="tw"><table><thead><tr><th>Position (de droite à gauche)</th><th>8e</th><th>7e</th><th>6e</th><th>5e</th><th>4e</th><th>3e</th><th>2e</th><th>1re</th></tr></thead><tbody><tr><td>Valeur</td><td>128</td><td>64</td><td>32</td><td>16</td><td>8</td><td>4</td><td>2</td><td>1</td></tr><tr><td>Exemple : 01001101</td><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr></tbody></table></div>
+
+        <p>On additionne les valeurs des positions qui contiennent un 1 : 64 + 8 + 4 + 1 = <strong>77</strong>. Donc <code>01001101</code> en binaire vaut 77 en décimal.</p>
+        <h3>Méthode 1 : décimal vers binaire par soustraction</h3>
+        <p>Pars de la plus grande position, de 128 à 1. Si elle rentre dans le nombre, note 1 et soustrais-la. Sinon, note 0. Pour 77 : 128 ne rentre pas (0), 64 rentre (1, reste 13), 32 non (0), 16 non (0), 8 rentre (1, reste 5), 4 rentre (1, reste 1), 2 non (0), 1 rentre (1). On obtient <code>01001101</code>.</p>
+        <h3>Méthode 2 : divisions successives par 2</h3>
+        <p>Divise par 2 en notant le reste, jusqu'à arriver à 0, puis lis les restes <em>de bas en haut</em>.</p>
+<div class="tw"><table><thead><tr><th>Division</th><th>Quotient</th><th>Reste</th></tr></thead><tbody><tr><td>77 ÷ 2</td><td>38</td><td>1</td></tr><tr><td>38 ÷ 2</td><td>19</td><td>0</td></tr><tr><td>19 ÷ 2</td><td>9</td><td>1</td></tr><tr><td>9 ÷ 2</td><td>4</td><td>1</td></tr><tr><td>4 ÷ 2</td><td>2</td><td>0</td></tr><tr><td>2 ÷ 2</td><td>1</td><td>0</td></tr><tr><td>1 ÷ 2</td><td>0</td><td>1</td></tr></tbody></table></div>
+
+        <p>Lecture de bas en haut : <code>1001101</code>. On complète à gauche avec un 0 pour faire un octet : <code>01001101</code>.</p>
+    <div class="tip"><span class="ci">💡</span><div><strong>Astuce :</strong> Quelques repères à connaître : 2<sup>10</sup> = 1 024, 255 = 11111111 (tout à 1 sur un octet), 256 = 2<sup>8</sup>. Pour savoir si un nombre est pair en binaire, regarde son dernier bit : 0 veut dire pair.</div></div>
+        <p>Le convertisseur de la section 4 permet de vérifier tes calculs en cliquant sur les bits.</p>
+  </div>
+</div>
+
+<!-- ═══ MODULE 03 ═══ -->
+<div class="module" id="s3">
+  <div class="mod-head">
+    <span class="mod-tag">03</span>
+    <div><h2>L'hexadécimal</h2><p>Un chiffre pour 4 bits : le raccourci du binaire</p></div>
+  </div>
+  <div class="mod-body">
+        <p>Lire <code>01001101</code> est pénible, et se tromper d'un bit est facile. L'<strong>hexadécimal</strong> (base 16) règle le problème : il utilise <strong>16 symboles</strong>, les chiffres de 0 à 9 puis les lettres A à F.</p>
+<div class="tw"><table><thead><tr><th>Hexa</th><th>Décimal</th><th>Binaire (4 bits)</th></tr></thead><tbody><tr><td>0</td><td>0</td><td>0000</td></tr><tr><td>1</td><td>1</td><td>0001</td></tr><tr><td>2</td><td>2</td><td>0010</td></tr><tr><td>3</td><td>3</td><td>0011</td></tr><tr><td>4</td><td>4</td><td>0100</td></tr><tr><td>5</td><td>5</td><td>0101</td></tr><tr><td>6</td><td>6</td><td>0110</td></tr><tr><td>7</td><td>7</td><td>0111</td></tr><tr><td>8</td><td>8</td><td>1000</td></tr><tr><td>9</td><td>9</td><td>1001</td></tr><tr><td>A</td><td>10</td><td>1010</td></tr><tr><td>B</td><td>11</td><td>1011</td></tr><tr><td>C</td><td>12</td><td>1100</td></tr><tr><td>D</td><td>13</td><td>1101</td></tr><tr><td>E</td><td>14</td><td>1110</td></tr><tr><td>F</td><td>15</td><td>1111</td></tr></tbody></table></div>
+
+        <p>Un chiffre hexadécimal correspond exactement à <strong>4 bits</strong> (un demi-octet). Un octet s'écrit donc avec <strong>deux chiffres</strong> hexadécimaux, de <code>00</code> à <code>FF</code>.</p>
+        <h3>Binaire vers hexadécimal : par paquets de 4</h3>
+        <p>Découpe le binaire en groupes de 4 bits en partant de la droite, puis traduis chaque groupe avec la table. Pour <code>01001101</code> : <code>0100</code> = 4 et <code>1101</code> = D, donc <strong>0x4D</strong>.</p>
+        <h3>Hexadécimal vers décimal</h3>
+        <p>Le premier chiffre vaut 16 fois sa valeur, le second vaut sa valeur : 0x4D = 4 × 16 + 13 = <strong>77</strong>. Et 0xFF = 15 × 16 + 15 = 255.</p>
+        <h3>Reconnaître la base d'un nombre</h3>
+        <p>Écrit « 10 », un nombre est ambigu. Les préfixes lèvent le doute :</p>
+<div class="tw"><table><thead><tr><th>Écriture</th><th>Base</th><th>Valeur décimale</th></tr></thead><tbody><tr><td><code>10</code></td><td>décimal</td><td>10</td></tr><tr><td><code>0x10</code> ou <code>10h</code></td><td>hexadécimal</td><td>16</td></tr><tr><td><code>0b10</code></td><td>binaire</td><td>2</td></tr><tr><td><code>\x41</code></td><td>un octet en hexa dans une chaîne (C, Python)</td><td>65</td></tr><tr><td><code>%41</code></td><td>un octet dans une URL</td><td>65</td></tr></tbody></table></div>
+
+        <h3>Où voit-on de l'hexadécimal ?</h3>
+        <p>Les couleurs web : <code>#9BF03C</code> est le vert de cette page, soit trois octets : 9B = 155 (rouge), F0 = 240 (vert), 3C = 60 (bleu). Les adresses mémoire (<code>0x7ffc0100</code>), les adresses MAC (<code>3C:22:FB:…</code>), les empreintes (hash) et le code machine s'écrivent aussi en hexadécimal.</p>
+    <div class="info"><span class="ci">🛡️</span><div><strong>Côté cyber :</strong> Quand tu ouvres un fichier avec un éditeur hexadécimal, chaque octet apparaît en deux chiffres. Quelques valeurs deviennent des réflexes : 00 (zéro), 41 (la lettre A), FF (tout à 1), 90 (instruction « ne rien faire » en x86).</div></div>
+
+  </div>
+</div>
+
+<!-- ═══ MODULE 04 ═══ -->
+<div class="module" id="s4">
+  <div class="mod-head">
+    <span class="mod-tag">04</span>
+    <div><h2>Convertisseur interactif</h2><p>Deux simulateurs pour manipuler les bases</p></div>
+  </div>
+  <div class="mod-body">
+        <p>Clique sur les bits pour construire un octet, ou écris une valeur dans l'un des champs : les autres se mettent à jour.</p>
+        <div class="sim" id="osim">
+          <h3>Simulateur · un octet</h3>
+          <p class="sub">Les cases sont classées de la plus grande position (128) à la plus petite (1).</p>
+          <div class="bitrow" id="o-bits"></div>
+          <div class="sg">
+            <div class="fld"><label for="o-dec">Décimal (0 à 255)</label><input class="t" id="o-dec" inputmode="numeric" autocomplete="off"></div>
+            <div class="fld"><label for="o-bin">Binaire (8 bits)</label><input class="t" id="o-bin" autocomplete="off"></div>
+            <div class="fld"><label for="o-hex">Hexadécimal (2 chiffres)</label><input class="t" id="o-hex" autocomplete="off"></div>
+          </div>
+          <div class="sg">
+            <div class="reg"><b>Non signé</b><span id="o-uns">77</span></div>
+            <div class="reg"><b>Signé (compl. à deux)</b><span id="o-sig">77</span></div>
+            <div class="reg"><b>Caractère ASCII</b><span id="o-chr">M</span></div>
+          </div>
+          <p class="say" id="o-msg" role="status" aria-live="polite">Clique sur les bits, ou écris dans un champ.</p>
+        </div>
+        <h3>Et pour de plus grands nombres ?</h3>
+        <p>Un nombre plus grand que 255 demande plusieurs octets. Ce second convertisseur accepte des nombres bien plus grands, dans les trois bases.</p>
+        <div class="sim" id="gsim">
+          <h3>Simulateur · grand nombre</h3>
+          <p class="sub">Tu peux ajouter les préfixes 0x ou 0b, ils sont ignorés. Les espaces aussi.</p>
+          <div class="fld"><label for="g-dec">Décimal</label><input class="t" id="g-dec" autocomplete="off"></div>
+          <div class="fld"><label for="g-hex">Hexadécimal</label><input class="t" id="g-hex" autocomplete="off"></div>
+          <div class="fld"><label for="g-bin">Binaire</label><input class="t" id="g-bin" autocomplete="off"></div>
+          <p class="say" id="g-msg" role="status" aria-live="polite">Écris un nombre dans l'un des champs.</p>
+        </div>
+    <div class="tip"><span class="ci">🧪</span><div><strong>Essaie :</strong> Mets 255 dans le champ décimal puis ajoute 1 : tu passes de 8 à 9 bits. Sur un octet, ce neuvième bit n'existe pas : c'est ce que montre la section suivante.</div></div>
+
+  </div>
+</div>
+
+<!-- ═══ MODULE 05 ═══ -->
+<div class="module" id="s5">
+  <div class="mod-head">
+    <span class="mod-tag">05</span>
+    <div><h2>Les limites d'un octet</h2><p>Négatifs, dépassement et complément à deux</p></div>
+  </div>
+  <div class="mod-body">
+        <p>Un octet ne contient que 8 bits. Que se passe-t-il quand un calcul dépasse sa capacité, ou quand on veut des nombres négatifs ?</p>
+        <h3>Non signé et signé</h3>
+        <p>Un octet <strong>non signé</strong> représente 0 à 255. Pour représenter des nombres négatifs, on utilise le <strong>complément à deux</strong>. Le bit de poids fort (celui de gauche) distingue les valeurs positives ou nulles des valeurs négatives, mais il ne se contente pas de « porter un signe » : il a un <strong>poids négatif</strong>. Sur 8 bits, il vaut −128 au lieu de +128, et les autres bits gardent leur poids habituel (64, 32, 16…). La plage devient −128 à 127.</p>
+        <p>Exemples : <code>11111111</code> = −128 + 127 = <strong>−1</strong> ; <code>10000000</code> = −128 + 0 = <strong>−128</strong> ; <code>01111111</code> = 0 + 127 = <strong>127</strong>.</p>
+        <p>Raccourci équivalent : si la valeur non signée u est inférieure à 128, la valeur signée est u ; sinon, c'est u − 256. Pour lire un octet signé dont le bit de gauche vaut 1, on soustrait donc 256 à sa valeur non signée. Exemple : <code>0xF6</code> = 246 non signé, donc 246 − 256 = <strong>−10</strong>. Autre méthode : inverser tous les bits puis ajouter 1 donne la valeur absolue (<code>11110110</code> → <code>00001001</code> → + 1 = <code>00001010</code> = 10).</p>
+<div class="tw"><table><thead><tr><th>Octet</th><th>Non signé</th><th>Signé</th></tr></thead><tbody><tr><td><code>00000000</code></td><td>0</td><td>0</td></tr><tr><td><code>01111111</code> (0x7F)</td><td>127</td><td>127</td></tr><tr><td><code>10000000</code> (0x80)</td><td>128</td><td>−128</td></tr><tr><td><code>11111111</code> (0xFF)</td><td>255</td><td>−1</td></tr></tbody></table></div>
+
+        <h3>Le dépassement (overflow)</h3>
+        <p>Si le résultat d'un calcul ne tient pas dans la taille prévue, la retenue en trop est perdue et le nombre « repart à zéro ». Sur 8 bits non signé : 255 + 1 = <strong>0</strong>. En signé : 127 + 1 = <strong>−128</strong>.</p>
+        <div class="sim" id="wsim">
+          <h3>Simulateur · faire déborder un octet</h3>
+          <p class="sub">La valeur est stockée sur un seul octet. Appuie sur les boutons et observe.</p>
+          <div class="sg">
+            <div class="reg"><b>Binaire</b><span id="w-bin">11111010</span></div>
+            <div class="reg"><b>Non signé</b><span id="w-uns">250</span></div>
+            <div class="reg"><b>Signé</b><span id="w-sig">-6</span></div>
+          </div>
+          <div class="btns">
+            <button type="button" class="b" id="w-p1">+ 1</button>
+            <button type="button" class="b" id="w-m1">− 1</button>
+            <button type="button" class="b" id="w-p100">+ 100</button>
+            <button type="button" class="b" id="w-reset">Remettre à 250</button>
+          </div>
+          <p class="say" id="w-say" role="status" aria-live="polite">Appuie sur « + 1 » plusieurs fois.</p>
+        </div>
+    <div class="warn"><span class="ci">⚠️</span><div><strong>Côté cyber :</strong> Un dépassement d'entier est une cause classique de failles : un programme calcule une taille ou un nombre d'éléments, le résultat déborde, devient petit, et le programme réserve trop peu de mémoire avant d'y copier des données. Ce mécanisme conduit parfois à un débordement de tampon.</div></div>
+    <div class="tip"><span class="ci">📖</span><div><strong>Pour la culture :</strong> En 1996, la fusée Ariane 5 a échoué lors de son premier vol. Une des causes était la conversion d'une valeur trop grande vers un entier sur 16 bits, qui a provoqué une erreur non gérée.</div></div>
+
+  </div>
+</div>
+
+<!-- ═══ MODULE 06 ═══ -->
+<div class="module" id="s6">
+  <div class="mod-head">
+    <span class="mod-tag">06</span>
+    <div><h2>Le texte et l'ASCII</h2><p>Comment une lettre devient un nombre</p></div>
+  </div>
+  <div class="mod-body">
+        <p>Pour stocker du texte, on numérote les caractères. L'<strong>ASCII</strong>, né dans les années 1960, donne un numéro de 0 à 127 à 128 caractères : lettres sans accent, chiffres, ponctuation et codes de contrôle. Il tient sur 7 bits, donc dans un octet.</p>
+        <div class="tw"><table><thead><tr><th>Plage (décimal)</th><th>Plage (hexa)</th><th>Contenu</th></tr></thead><tbody>
+          <tr><td>0 à 31 et 127</td><td>0x00 à 0x1F, 0x7F</td><td>codes de contrôle, non imprimables (0x0A = saut de ligne, 0x00 = NUL)</td></tr>
+          <tr><td>32</td><td>0x20</td><td>espace</td></tr>
+          <tr><td>48 à 57</td><td>0x30 à 0x39</td><td>chiffres « 0 » à « 9 »</td></tr>
+          <tr><td>65 à 90</td><td>0x41 à 0x5A</td><td>majuscules A à Z</td></tr>
+          <tr><td>97 à 122</td><td>0x61 à 0x7A</td><td>minuscules a à z</td></tr>
+        </tbody></table></div>
+        <p>Deux remarques utiles. D'abord, le caractère « 5 » est le code 0x35, pas le nombre 5. Ensuite, une majuscule et sa minuscule ne diffèrent que d'un bit : <code>A</code> = 0x41 = <code>01000001</code> et <code>a</code> = 0x61 = <code>01100001</code> (le bit de valeur 32).</p>
+        <h3>Les caractères imprimables (0x20 à 0x7E)</h3>
+        <div class="agrid" role="img" aria-label="Table ASCII imprimable avec les codes hexadécimaux"><div><b>␣</b>20</div><div><b>!</b>21</div><div><b>"</b>22</div><div><b>#</b>23</div><div><b>$</b>24</div><div><b>%</b>25</div><div><b>&amp;</b>26</div><div><b>'</b>27</div><div><b>(</b>28</div><div><b>)</b>29</div><div><b>*</b>2A</div><div><b>+</b>2B</div><div><b>,</b>2C</div><div><b>-</b>2D</div><div><b>.</b>2E</div><div><b>/</b>2F</div><div><b>0</b>30</div><div><b>1</b>31</div><div><b>2</b>32</div><div><b>3</b>33</div><div><b>4</b>34</div><div><b>5</b>35</div><div><b>6</b>36</div><div><b>7</b>37</div><div><b>8</b>38</div><div><b>9</b>39</div><div><b>:</b>3A</div><div><b>;</b>3B</div><div><b>&lt;</b>3C</div><div><b>=</b>3D</div><div><b>&gt;</b>3E</div><div><b>?</b>3F</div><div><b>@</b>40</div><div><b>A</b>41</div><div><b>B</b>42</div><div><b>C</b>43</div><div><b>D</b>44</div><div><b>E</b>45</div><div><b>F</b>46</div><div><b>G</b>47</div><div><b>H</b>48</div><div><b>I</b>49</div><div><b>J</b>4A</div><div><b>K</b>4B</div><div><b>L</b>4C</div><div><b>M</b>4D</div><div><b>N</b>4E</div><div><b>O</b>4F</div><div><b>P</b>50</div><div><b>Q</b>51</div><div><b>R</b>52</div><div><b>S</b>53</div><div><b>T</b>54</div><div><b>U</b>55</div><div><b>V</b>56</div><div><b>W</b>57</div><div><b>X</b>58</div><div><b>Y</b>59</div><div><b>Z</b>5A</div><div><b>[</b>5B</div><div><b>\</b>5C</div><div><b>]</b>5D</div><div><b>^</b>5E</div><div><b>_</b>5F</div><div><b>`</b>60</div><div><b>a</b>61</div><div><b>b</b>62</div><div><b>c</b>63</div><div><b>d</b>64</div><div><b>e</b>65</div><div><b>f</b>66</div><div><b>g</b>67</div><div><b>h</b>68</div><div><b>i</b>69</div><div><b>j</b>6A</div><div><b>k</b>6B</div><div><b>l</b>6C</div><div><b>m</b>6D</div><div><b>n</b>6E</div><div><b>o</b>6F</div><div><b>p</b>70</div><div><b>q</b>71</div><div><b>r</b>72</div><div><b>s</b>73</div><div><b>t</b>74</div><div><b>u</b>75</div><div><b>v</b>76</div><div><b>w</b>77</div><div><b>x</b>78</div><div><b>y</b>79</div><div><b>z</b>7A</div><div><b>{</b>7B</div><div><b>|</b>7C</div><div><b>}</b>7D</div><div><b>~</b>7E</div></div>
+        <div class="sim" id="asim">
+          <h3>Simulateur · texte vers octets</h3>
+          <p class="sub">Tape un texte : chaque caractère est traduit en nombre (jusqu'à 20 caractères).</p>
+          <div class="fld"><label for="a-in">Texte</label><input class="t" id="a-in" value="Hello" maxlength="40" autocomplete="off"></div>
+          <div class="tw"><table class="mt" aria-label="Codes ASCII du texte"><thead><tr><th>Car.</th><th>Décimal</th><th>Hexa</th><th>Binaire</th></tr></thead><tbody id="a-out"></tbody></table></div>
+          <p class="say" id="a-msg" role="status" aria-live="polite"></p>
+        </div>
+    <div class="info"><span class="ci">🛡️</span><div><strong>Côté cyber :</strong> Dans un fichier ou un dump mémoire, repérer des plages d'octets entre 0x20 et 0x7E permet de retrouver du texte lisible. L'outil <code>strings</code> fait exactement cela : il extrait toutes les suites de caractères imprimables d'un fichier, et sert à glaner des indices dans un exécutable.</div></div>
+
+  </div>
+</div>
+
+<!-- ═══ MODULE 07 ═══ -->
+<div class="module" id="s7">
+  <div class="mod-head">
+    <span class="mod-tag">07</span>
+    <div><h2>Unicode et UTF-8</h2><p>Toutes les langues, du é à l'emoji</p></div>
+  </div>
+  <div class="mod-body">
+        <p>128 caractères, c'est largement insuffisant : pas de « é », ni de « ç », ni d'alphabet cyrillique, de chinois, d'emoji. <strong>Unicode</strong> est un catalogue qui donne un numéro unique à plus de 150 000 caractères de toutes les langues. Ce numéro s'appelle un <strong>point de code</strong>, noté <code>U+</code> suivi de l'hexadécimal : <code>U+0041</code> est le A, <code>U+00E9</code> est le é.</p>
+        <p>Il reste à choisir comment écrire ce numéro en octets : c'est le rôle d'un <strong>encodage</strong>. <strong>UTF-8</strong>, le plus répandu sur le web, utilise entre 1 et 4 octets par caractère.</p>
+<div class="tw"><table><thead><tr><th>Points de code</th><th>Octets</th><th>Forme binaire</th></tr></thead><tbody><tr><td>U+0000 à U+007F</td><td>1</td><td><code>0xxxxxxx</code></td></tr><tr><td>U+0080 à U+07FF</td><td>2</td><td><code>110xxxxx 10xxxxxx</code></td></tr><tr><td>U+0800 à U+FFFF</td><td>3</td><td><code>1110xxxx 10xxxxxx 10xxxxxx</code></td></tr><tr><td>U+10000 à U+10FFFF</td><td>4</td><td><code>11110xxx 10xxxxxx 10xxxxxx 10xxxxxx</code></td></tr></tbody></table></div>
+
+        <p>Les « x » sont remplacés par les bits du point de code. Exemple pour <strong>é</strong> (U+00E9 = 11101001 sur 8 bits). Il tombe dans la plage à 2 octets, qui offre 11 places pour les bits : <code>00011101001</code>. En le plaçant dans le gabarit, on obtient <code>110</code><u>00011</u> <code>10</code><u>101001</u> = <code>11000011 10101001</code> = <strong>C3 A9</strong>.</p>
+        <p>Les 128 premiers caractères d'UTF-8 sont identiques à l'ASCII : un fichier ASCII est un fichier UTF-8 valide. Cela explique son succès.</p>
+        <div class="sim" id="usim">
+          <h3>Simulateur · UTF-8</h3>
+          <p class="sub">Tape des lettres accentuées, des symboles, des emoji. Le tableau montre leur point de code et leurs octets.</p>
+          <div class="fld"><label for="u-in">Texte</label><input class="t" id="u-in" value="é€😀A" maxlength="40" autocomplete="off"></div>
+          <div class="tw"><table class="mt" aria-label="Points de code et octets UTF-8"><thead><tr><th>Car.</th><th>Point de code</th><th>Octets UTF-8</th><th>Nb</th></tr></thead><tbody id="u-out"></tbody></table></div>
+          <p class="say" id="u-msg" role="status" aria-live="polite"></p>
+        </div>
+        <h3>Quand l'encodage ne correspond pas</h3>
+        <p>Si un programme lit des octets UTF-8 en croyant qu'ils sont dans un autre encodage (Latin-1 ou Windows-1252, deux encodages proches mais pas identiques), il affiche des symboles bizarres : « é » devient « Ã© ». Ces erreurs s'appellent des <em>mojibake</em>. Le champ « Lu à tort en Windows-1252 » du simulateur les reproduit.</p>
+    <div class="info"><span class="ci">🛡️</span><div><strong>Côté cyber :</strong> Le nombre de caractères n'est pas le nombre d'octets : « é » fait 1 caractère mais 2 octets. Les programmes qui confondent les deux (une longueur calculée en caractères, une copie faite en octets) se trompent de taille, d'où des failles de débordement.</div></div>
+    <div class="warn"><span class="ci">⚠️</span><div><strong>Côté cyber :</strong> Certains caractères Unicode ressemblent à des lettres latines : le « а » cyrillique (U+0430) est presque identique au « a » latin (U+0061). Les attaquants s'en servent pour fabriquer de faux noms de domaine ou de faux liens. En cas de doute, regarde les points de code.</div></div>
+
+  </div>
+</div>
+
+<!-- ═══ MODULE 08 ═══ -->
+<div class="module" id="s8">
+  <div class="mod-head">
+    <span class="mod-tag">08</span>
+    <div><h2>Encoder, chiffrer, hacher</h2><p>Trois notions que l'on confond souvent</p></div>
+  </div>
+  <div class="mod-body">
+        <p>Ces trois mots sont souvent confondus, y compris dans les médias. Ils répondent pourtant à trois besoins différents.</p>
+<div class="tw"><table><thead><tr><th></th><th>Encodage</th><th>Chiffrement</th><th>Hachage</th></tr></thead><tbody><tr><td>But</td><td>changer la forme des données pour qu'elles passent partout</td><td>rendre les données illisibles sans la clé</td><td>produire une empreinte pour vérifier ou comparer</td></tr><tr><td>Clé secrète ?</td><td>non</td><td>oui</td><td>non (parfois un sel)</td></tr><tr><td>Réversible ?</td><td>oui, par n'importe qui</td><td>oui, avec la bonne clé</td><td>non, pas directement (on peut tester des candidats)</td></tr><tr><td>Exemples</td><td>Base64, hexadécimal, URL, UTF-8</td><td>AES, ChaCha20, RSA</td><td>SHA-256 (empreinte rapide) ; bcrypt, Argon2id (mots de passe)</td></tr><tr><td>Protège contre l'espionnage ?</td><td>non</td><td>oui</td><td>non, ce n'est pas son rôle</td></tr></tbody></table></div>
+
+        <h3>Une empreinte très sensible</h3>
+        <p>Un hash change complètement si on modifie un seul caractère. Voici le SHA-256 de deux textes presque identiques :</p>
+    <div class="cb"><div class="cb-h"><span>SHA-256</span><button type="button" class="copy">Copier</button></div><pre><code>"Bonjour" = 9172e8eec99f144f72eca9a568759580edadb2cfd154857f07e657569493bc44
+"bonjour" = 2cb4b1431b84ec15d35ed83bb927e27e8967d75f4bcd9cc4b25c8d879ae23e18</code></pre></div>
+
+        <p>Une empreinte SHA-256 fait toujours 32 octets, soit 64 chiffres hexadécimaux, quelle que soit la taille du texte d'origine. Un hash ne se « décode » pas comme du Base64 : on ne peut pas l'inverser directement. Mais on peut <strong>tester des candidats</strong> : on calcule l'empreinte de chaque mot d'une liste et on la compare. Si le contenu d'origine est prévisible (un mot de passe courant, un numéro à 4 chiffres), on le retrouve vite. Un SHA-256 simple est très rapide à calculer, donc très rapide à tester en masse.</p>
+    <div class="warn"><span class="ci">⚠️</span><div><strong>Côté cyber :</strong> Un mot de passe ne doit être stocké ni en clair, ni encodé en Base64, ni chiffré avec une clé laissée à côté. On stocke un <strong>hash</strong> obtenu avec un algorithme conçu pour les mots de passe, lent exprès et salé, comme Argon2id ou bcrypt, et non un simple SHA-256. Si tu vois « mot de passe encodé en Base64 » dans un audit, c'est un défaut grave.</div></div>
+
+  </div>
+</div>
+
+<!-- ═══ MODULE 09 ═══ -->
+<div class="module" id="s9">
+  <div class="mod-head">
+    <span class="mod-tag">09</span>
+    <div><h2>Base64 et autres encodages</h2><p>Un encodage courant, à reconnaître et décoder</p></div>
+  </div>
+  <div class="mod-body">
+        <p>Beaucoup de systèmes (email, formulaires web, JSON) ne savent transporter que du texte simple. Pour y faire passer des octets quelconques, on les encode. <strong>Base64</strong> est le plus courant.</p>
+        <h3>Comment fonctionne Base64</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">01</div><div class="step-body"><h4>Prendre 3 octets</h4><p>Les données sont lues par groupes de 3 octets, soit 24 bits.</p></div></div>
+          <div class="step"><div class="step-num">02</div><div class="step-body"><h4>Redécouper en 4 morceaux de 6 bits</h4><p>Chaque morceau est un nombre de 0 à 63.</p></div></div>
+          <div class="step"><div class="step-num">03</div><div class="step-body"><h4>Remplacer par un caractère</h4><p>L'alphabet est <code>A–Z</code> (0 à 25), <code>a–z</code> (26 à 51), <code>0–9</code> (52 à 61), <code>+</code> (62) et <code>/</code> (63).</p></div></div>
+          <div class="step"><div class="step-num">04</div><div class="step-body"><h4>Compléter avec « = »</h4><p>Si le dernier groupe est incomplet, on ajoute un ou deux <code>=</code>. Le résultat est environ un tiers plus gros que l'original.</p></div></div>
+        </div>
+        <p>Exemple avec « Cyb » : 43 79 62 = <code>01000011 01111001 01100010</code>. En morceaux de 6 bits : <code>010000 110111 100101 100010</code> = 16, 55, 37, 34, soit les caractères <strong>Q 3 l i</strong>.</p>
+        <div class="sim" id="bsim">
+          <h3>Simulateur · encoder et décoder</h3>
+          <p class="sub">Écris un texte : il est transformé en octets (UTF-8), puis en hexadécimal, en Base64 et en encodage d'URL.</p>
+          <div class="fld"><label for="b-in">Texte</label><input class="t" id="b-in" value="Bonjour" maxlength="80" autocomplete="off"></div>
+          <div class="fld"><label>Octets (hexadécimal)</label><p class="outv" id="b-hex"></p></div>
+          <div class="fld"><label>Base64</label><p class="outv big" id="b-b64"></p></div>
+          <div class="fld"><label>Encodage d'URL</label><p class="outv" id="b-url"></p></div>
+          <div class="fld"><label>Les 3 premiers octets en morceaux de 6 bits</label><p class="outv" id="b-steps"></p></div>
+          <h3 style="margin-top:18px">Décoder du Base64</h3>
+          <div class="fld"><label for="d-in">Texte en Base64</label><input class="t" id="d-in" value="Qm9uam91cg==" autocomplete="off"></div>
+          <p class="say" id="d-out" role="status" aria-live="polite"></p>
+        </div>
+        <h3>Où voit-on du Base64 ?</h3>
+        <ul>
+          <li>Les pièces jointes d'un email (format MIME) et les images intégrées dans une page web (<code>data:image/png;base64,…</code>).</li>
+          <li>Les en-têtes HTTP d'authentification basique : <code>Authorization: Basic dXNlcjpwYXNz</code> se décode en <code>user:pass</code>. Les identifiants sont donc lisibles par quiconque intercepte la requête.</li>
+          <li>Les jetons JWT : trois morceaux en Base64URL (variante avec <code>-</code> et <code>_</code> à la place de <code>+</code> et <code>/</code>) séparés par des points.</li>
+          <li>Les scripts d'attaque ou d'administration : l'option <code>-EncodedCommand</code> de PowerShell attend du Base64 contenant la commande encodée en UTF-16LE. Décoder ce Base64 en UTF-8 donne donc un résultat incorrect : il faut décoder en UTF-16LE.</li>
+        </ul>
+        <p><strong>Pour le reconnaître</strong> : un texte composé de lettres, de chiffres, de <code>+</code> et <code>/</code>, dont la longueur est un multiple de 4, avec un ou deux <code>=</code> à la fin. Mais un hash ou un texte aléatoire peut y ressembler : on vérifie en essayant de décoder.</p>
+        <h3>Les autres encodages courants</h3>
+<div class="tw"><table><thead><tr><th>Encodage</th><th>Principe</th><th>Exemple</th></tr></thead><tbody><tr><td>Hexadécimal</td><td>chaque octet en 2 chiffres</td><td><code>Cyber</code> → <code>43 79 62 65 72</code></td></tr><tr><td>Encodage d'URL</td><td>les caractères spéciaux deviennent <code>%</code> + hexa</td><td>espace → <code>%20</code>, é → <code>%C3%A9</code></td></tr><tr><td>Base64URL</td><td>Base64 sans <code>+</code>, <code>/</code> ni <code>=</code>, sûr dans une URL</td><td>utilisé par les JWT</td></tr></tbody></table></div>
+    <div class="warn"><span class="ci">⚠️</span><div><strong>Côté cyber :</strong> Dans une alerte de sécurité ou un script suspect, une longue chaîne de Base64 est un grand classique pour cacher une commande. L'analyste la décode (par exemple avec CyberChef, un outil gratuit) pour voir ce qu'elle fait. Décoder n'exige aucun secret : c'est exactement pour cela qu'encoder ne protège rien.</div></div>
+
+  </div>
+</div>
+
+<!-- ═══ MODULE 10 ═══ -->
+<div class="module" id="s10">
+  <div class="mod-head">
+    <span class="mod-tag">10</span>
+    <div><h2>Opérations sur les bits et XOR</h2><p>AND, OR, XOR et leur usage en cybersécurité</p></div>
+  </div>
+  <div class="mod-body">
+        <p>Le processeur sait combiner les bits un à un. Quatre opérations reviennent sans cesse :</p>
+<div class="tw"><table><thead><tr><th>A</th><th>B</th><th>A AND B</th><th>A OR B</th><th>A XOR B</th></tr></thead><tbody><tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr></tbody></table></div>
+
+        <ul>
+          <li><strong>AND</strong> : vaut 1 seulement si les deux bits valent 1. Sert à <em>garder</em> certains bits (un masque). Exemple : <code>0x4D AND 0x0F</code> = <code>0x0D</code>, on ne garde que les 4 bits de droite.</li>
+          <li><strong>OR</strong> : vaut 1 si au moins un bit vaut 1. Sert à <em>forcer</em> des bits à 1.</li>
+          <li><strong>XOR</strong> (ou exclusif) : vaut 1 si les deux bits sont <em>différents</em>. Sert à <em>inverser</em> des bits.</li>
+          <li><strong>NOT</strong> : inverse tous les bits d'un coup.</li>
+        </ul>
+        <p>Les décalages (<code>&lt;&lt;</code> et <code>&gt;&gt;</code>) déplacent les bits : décaler d'une position vers la gauche multiplie par 2.</p>
+        <h3>La propriété magique du XOR</h3>
+        <p>Appliquer deux fois le même XOR redonne la valeur de départ : <code>(A XOR K) XOR K = A</code>. Si K est une « clé », le même calcul brouille puis débrouille. Exemple : <code>0x43 XOR 0x5A</code> = <code>0x19</code>, et <code>0x19 XOR 0x5A</code> = <code>0x43</code>.</p>
+        <div class="sim" id="xsim">
+          <h3>Simulateur · XOR avec une clé d'un octet</h3>
+          <p class="sub">Change le texte ou la clé et observe. La clé s'écrit avec un ou deux chiffres hexadécimaux.</p>
+          <div class="fld"><label for="x-in">Texte</label><input class="t" id="x-in" value="Cyber" maxlength="40" autocomplete="off"></div>
+          <div class="fld"><label for="x-key">Clé (hexadécimal, 00 à FF)</label><input class="t" id="x-key" value="5A" maxlength="2" autocomplete="off"></div>
+          <div class="fld"><label>Texte en hexadécimal</label><p class="outv" id="x-a"></p></div>
+          <div class="fld"><label>Après XOR avec la clé</label><p class="outv big" id="x-b"></p></div>
+          <div class="fld"><label>XOR encore une fois avec la clé</label><p class="outv" id="x-c"></p></div>
+          <p class="say" id="x-msg" role="status" aria-live="polite"></p>
+        </div>
+    <div class="info"><span class="ci">🛡️</span><div><strong>Côté cyber :</strong> Beaucoup de malwares brouillent leurs chaînes avec un XOR à clé fixe : c'est de l'<strong>obfuscation</strong>, pas du vrai chiffrement. Avec une clé d'un octet, il n'y a que 256 clés possibles : un analyste les essaie toutes en quelques secondes, ou repère la clé en cherchant les octets les plus fréquents. Un XOR devient inviolable seulement avec une clé vraiment aléatoire, aussi longue que le message et jamais réutilisée (le « masque jetable »), ce qui est très peu pratique.</div></div>
+    <div class="tip"><span class="ci">ℹ️</span><div><strong>À savoir :</strong> Les masques de sous-réseau en réseau fonctionnent avec un AND : <code>192.168.1.37 AND 255.255.255.0</code> donne l'adresse du réseau <code>192.168.1.0</code>. Tu le recroiseras en réseau.</div></div>
+
+  </div>
+</div>
+
+<!-- ═══ MODULE 11 ═══ -->
+<div class="module" id="s11">
+  <div class="mod-head">
+    <span class="mod-tag">11</span>
+    <div><h2>Côté cyber : lire des octets</h2><p>Dump hexadécimal, signatures de fichiers, ordre des octets</p></div>
+  </div>
+  <div class="mod-body">
+        <p>Voyons comment ces notions s'appliquent à un vrai fichier. L'outil <code>xxd</code> (ou <code>hexdump -C</code>) affiche les octets d'un fichier en hexadécimal, avec leur lecture en ASCII à droite.</p>
+    <div class="cb"><div class="cb-h"><span>Début d'un exécutable Windows (exemple)</span><button type="button" class="copy">Copier</button></div><pre><code>00000000: 4d5a 9000 0300 0000 0400 0000 ffff 0000  MZ..............
+00000010: b800 0000 0000 0000 4000 0000 0000 0000  ........@.......</code></pre></div>
+
+        <p>Trois colonnes à repérer : le <strong>décalage</strong> à gauche (la position, en hexadécimal, du premier octet de la ligne), les <strong>octets</strong> au milieu (16 par ligne, regroupés par paires), et la <strong>lecture ASCII</strong> à droite (un point pour les octets non imprimables). Ici, les deux premiers octets <code>4d 5a</code> sont les lettres « MZ » : un exécutable Windows.</p>
+        <h3>Les nombres magiques</h3>
+        <p>Beaucoup de formats de fichier commencent par une signature :</p>
+<div class="tw"><table><thead><tr><th>Octets (hexa)</th><th>ASCII</th><th>Type de fichier</th></tr></thead><tbody><tr><td><code>4D 5A</code></td><td>MZ</td><td>exécutable Windows (PE) : .exe, .dll</td></tr><tr><td><code>7F 45 4C 46</code></td><td>\x7fELF</td><td>exécutable Linux (ELF)</td></tr><tr><td><code>25 50 44 46 2D</code></td><td>%PDF-</td><td>document PDF</td></tr><tr><td><code>89 50 4E 47 0D 0A 1A 0A</code></td><td>\x89PNG…</td><td>image PNG</td></tr><tr><td><code>FF D8 FF</code></td><td>…</td><td>image JPEG</td></tr><tr><td><code>50 4B 03 04</code></td><td>PK..</td><td>archive ZIP, et aussi docx, xlsx, jar, apk</td></tr><tr><td><code>1F 8B</code></td><td>…</td><td>compression gzip</td></tr></tbody></table></div>
+
+        <p>La commande <code>file</code> s'appuie sur ces signatures. Elle se fie au contenu, pas à l'extension : un fichier renommé <code>facture.pdf</code> qui commence par <code>4D 5A</code> est <em>probablement</em> un exécutable Windows, ce qui mérite un examen approfondi.</p>
+        <p><strong>Une signature est un indice, pas une preuve.</strong> Elle peut être imitée, falsifiée, ou présente dans un fichier malformé. Les deux octets <code>4D 5A</code> ne prouvent pas, à eux seuls, qu'un fichier est un exécutable Windows valide. Un analyste regarde aussi la structure interne du fichier (en-têtes, sections, cohérence des tailles) et son comportement, pas seulement sa signature ou son extension.</p>
+        <h3>L'ordre des octets : petit-boutisme</h3>
+        <p>Quand un nombre occupe plusieurs octets, l'ordre de rangement compte. Les processeurs x86 et ARM courants utilisent le <strong>little-endian</strong> : l'octet de poids faible est rangé en premier. Le nombre <code>0x00401000</code> apparaît donc dans un dump sous la forme <code>00 10 40 00</code>. Les réseaux utilisent l'ordre inverse (<em>big-endian</em>), le plus naturel à lire.</p>
+        <p>Si tu lis une adresse dans un dump mémoire et qu'elle te semble « à l'envers », c'est probablement ça.</p>
+        <h3>D'autres valeurs que tu croiseras</h3>
+        <ul>
+          <li>Une adresse IPv4 est un nombre de 32 bits écrit octet par octet : <code>192.168.1.1</code> = <code>C0 A8 01 01</code>.</li>
+          <li>Une adresse MAC fait 6 octets, écrits en hexadécimal : <code>3C:22:FB:12:34:56</code>.</li>
+          <li>Un hash SHA-256 fait 32 octets, soit 64 chiffres hexadécimaux.</li>
+          <li>Un port réseau est un nombre de 16 bits, de 0 à 65 535.</li>
+        </ul>
+    <div class="warn"><span class="ci">⚖️</span><div><strong>Éthique et droit :</strong> N'analyse que des fichiers qui t'appartiennent ou que tu as le droit d'étudier. Pour les échantillons suspects, travaille dans une machine virtuelle isolée, sans y ouvrir de documents personnels.</div></div>
+
+  </div>
+</div>
+
+<!-- ═══ MODULE 12 ═══ -->
+<div class="module" id="s12">
+  <div class="mod-head">
+    <span class="mod-tag">12</span>
+    <div><h2>Exercices pratiques</h2><p>Six exercices avec solutions détaillées</p></div>
+  </div>
+  <div class="mod-body">
+        <p>Les exercices 1 à 3 se font sur papier, puis se vérifient avec le convertisseur. Les exercices 4 à 6 se font avec les simulateurs, et l'exercice 5 demande un terminal Linux (ou WSL sous Windows).</p>
+    <article class="ex">
+      <div class="ex-h"><b>Exercice 1</b><h4>Du binaire au décimal</h4></div>
+      <p class="q">Convertis <code>11010110</code> et <code>00101101</code> en décimal, puis en hexadécimal.</p>
+      <details class="sol"><summary>Voir la solution</summary><div>
+            <p><strong>Méthode.</strong> Écris les positions au-dessus des bits, puis additionne celles qui ont un 1.</p>
+            <div class="tw"><table><thead><tr><th></th><th>128</th><th>64</th><th>32</th><th>16</th><th>8</th><th>4</th><th>2</th><th>1</th><th>Somme</th></tr></thead><tbody><tr><td><code>11010110</code></td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td><td>128 + 64 + 16 + 4 + 2 = <strong>214</strong></td></tr><tr><td><code>00101101</code></td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td><td>32 + 8 + 4 + 1 = <strong>45</strong></td></tr></tbody></table></div>
+
+            <p><strong>En hexadécimal</strong>, regroupe par 4 bits. <code>1101 0110</code> : 1101 = D et 0110 = 6, donc <strong>0xD6</strong> (vérification : 13 × 16 + 6 = 214). <code>0010 1101</code> : 0010 = 2 et 1101 = D, donc <strong>0x2D</strong> (vérification : 2 × 16 + 13 = 45).</p>
+            <p><strong>Piège fréquent :</strong> lire les positions de gauche à droite avec 1, 2, 4… au lieu de 128, 64, 32… La plus grande position est à gauche.</p>
+      </div></details>
+    </article>
+    <article class="ex">
+      <div class="ex-h"><b>Exercice 2</b><h4>Du décimal au binaire et à l'hexadécimal</h4></div>
+      <p class="q">Convertis 200 en binaire sur un octet, puis en hexadécimal. Fais ensuite 77 avec la méthode des divisions successives.</p>
+      <details class="sol"><summary>Voir la solution</summary><div>
+            <p><strong>200 par soustraction :</strong> 128 rentre (1, reste 72) ; 64 rentre (1, reste 8) ; 32 non (0) ; 16 non (0) ; 8 rentre (1, reste 0) ; 4, 2, 1 non (0, 0, 0). On obtient <code>11001000</code>.</p>
+            <p><strong>En hexadécimal :</strong> <code>1100 1000</code> : 1100 = C et 1000 = 8, donc <strong>0xC8</strong>. Vérification : 12 × 16 + 8 = 200.</p>
+            <p><strong>77 par divisions :</strong> les restes, de la première à la dernière division, sont 1, 0, 1, 1, 0, 0, 1. Lus de bas en haut : <code>1001101</code>, donc <code>01001101</code> sur un octet, soit 0x4D. C'est le tableau de la section 2.</p>
+            <p><strong>Contrôle :</strong> entre 200 dans le champ décimal du convertisseur de la section 4. Les bits 128, 64 et 8 doivent s'allumer.</p>
+      </div></details>
+    </article>
+    <article class="ex">
+      <div class="ex-h"><b>Exercice 3</b><h4>Signé, non signé et dépassement</h4></div>
+      <p class="q">(a) Que vaut l'octet <code>0xF6</code> en non signé et en signé ? (b) Que donne <code>0xFF</code> + 1 sur un octet non signé ? (c) Que donne 127 + 1 sur un octet signé ?</p>
+      <details class="sol"><summary>Voir la solution</summary><div>
+            <p><strong>(a)</strong> Non signé : 0xF6 = 15 × 16 + 6 = 246. Le bit de gauche vaut 1 (<code>11110110</code>) : en signé, on calcule −128 + 118 = <strong>−10</strong> (118 = 64 + 32 + 16 + 4 + 2, les autres bits). Même résultat avec le raccourci : 246 − 256 = −10. Autre vérification : on inverse les bits (<code>00001001</code>) et on ajoute 1, ce qui donne <code>00001010</code> = 10, donc la valeur est −10.</p>
+            <p><strong>(b)</strong> <code>11111111</code> + 1 = <code>1 00000000</code>. Le 9<sup>e</sup> bit n'existe pas sur un octet : il est perdu et le résultat est <strong>0</strong>.</p>
+            <p><strong>(c)</strong> 127 = <code>01111111</code>. Ajouter 1 donne <code>10000000</code>, dont le bit de gauche est à 1 : en signé, c'est <strong>−128</strong>. Le nombre positif le plus grand « bascule » vers le négatif le plus petit.</p>
+            <p><strong>Contrôle :</strong> dans le simulateur de la section 5, remets à 250 et appuie sur « + 1 » jusqu'au dépassement. Tu verras la valeur signée passer de −1 à 0 en même temps que la valeur non signée passe de 255 à 0.</p>
+      </div></details>
+    </article>
+    <article class="ex">
+      <div class="ex-h"><b>Exercice 4</b><h4>Du texte aux octets</h4></div>
+      <p class="q">(a) Écris « Hi! » en hexadécimal avec la table ASCII. (b) Décode <code>43 79 62 65 72</code>. (c) Quelle est la taille en octets de « é€ » en UTF-8 ?</p>
+      <details class="sol"><summary>Voir la solution</summary><div>
+            <p><strong>(a)</strong> H = 0x48, i = 0x69, ! = 0x21, donc <code>48 69 21</code>.</p>
+            <p><strong>(b)</strong> 0x43 = C, 0x79 = y, 0x62 = b, 0x65 = e, 0x72 = r, donc <strong>Cyber</strong>. Astuce : les lettres majuscules vont de 0x41 à 0x5A et les minuscules de 0x61 à 0x7A, ce qui permet d'estimer vite.</p>
+            <p><strong>(c)</strong> « é » prend 2 octets (<code>C3 A9</code>) et « € » en prend 3 (<code>E2 82 AC</code>) : <strong>5 octets</strong> pour 2 caractères.</p>
+            <p><strong>Contrôle :</strong> tape « Cyber » dans le simulateur de la section 6 et « é€ » dans celui de la section 7.</p>
+      </div></details>
+    </article>
+    <article class="ex">
+      <div class="ex-h"><b>Exercice 5</b><h4>Voir les octets dans un terminal</h4></div>
+      <p class="q">Observe le même texte sous trois formes avec <code>xxd</code>, <code>base64</code> et <code>sha256sum</code>, puis repère les signatures de fichiers réels.</p>
+    <div class="cb"><div class="cb-h"><span>Linux</span><button type="button" class="copy">Copier</button></div><pre><code>echo -n "Cyber" | xxd
+echo -n "Cyber" | base64
+echo -n "Cyber" | sha256sum
+echo "Q3liZXI=" | base64 -d
+echo "Cyber" | base64
+
+head -c 8 un_fichier.png | xxd
+file un_fichier.png</code></pre></div>
+      <details class="sol"><summary>Voir la solution</summary><div>
+            <p><strong>Ce que font les commandes.</strong> L'option <code>-n</code> de <code>echo</code> supprime le saut de ligne final. Sans elle, <code>echo</code> ajoute un octet <code>0A</code> à la fin, ce qui change tous les résultats.</p>
+            <p><strong>Résultats attendus :</strong></p>
+            <div class="cb"><div class="cb-h"><span>Résultats</span><button type="button" class="copy">Copier</button></div><pre><code>00000000: 4379 6265 72                             Cyber
+Q3liZXI=
+f729abbf1227241982861257964f79f3edde2a3a5d4bddc477ed478548166936  -
+Cyber
+Q3liZXIK</code></pre></div>
+            <p>La première ligne est l'hexadécimal (<code>43 79 62 65 72</code>, comme à l'exercice 4) ; l'alignement exact peut varier selon la version de <code>xxd</code>. La deuxième est le Base64, dont tu as calculé le début (<code>Q3li</code>) en section 9. La troisième est le hash : 64 chiffres hexadécimaux. La quatrième retrouve « Cyber » : décoder ne demande aucune clé. La dernière, sans <code>-n</code>, donne <code>Q3liZXIK</code> au lieu de <code>Q3liZXI=</code> : le saut de ligne a ajouté un octet.</p>
+            <p><strong>Signatures :</strong> <code>head -c 8 un_fichier.png | xxd</code> doit afficher <code>8950 4e47 0d0a 1a0a</code>. Essaie aussi avec un PDF (<code>2550 4446 2d…</code>) ou un ZIP (<code>504b 0304</code>). Ensuite, copie un PNG sous le nom <code>faux.pdf</code> et lance <code>file faux.pdf</code> : la commande répond « PNG image data » malgré l'extension, car elle lit le contenu.</p>
+      </div></details>
+    </article>
+    <article class="ex">
+      <div class="ex-h"><b>Exercice 6</b><h4>Brouiller et débrouiller avec XOR</h4></div>
+      <p class="q">Avec le simulateur XOR de la section 10, brouille « Cyber » avec la clé 5A à la main (au moins la première lettre), puis vérifie. Que se passe-t-il avec la clé 00 ?</p>
+      <details class="sol"><summary>Voir la solution</summary><div>
+            <p><strong>À la main.</strong> « C » = 0x43 = <code>01000011</code> et la clé 0x5A = <code>01011010</code>. XOR bit à bit : <code>00011001</code> = <strong>0x19</strong>. Pour le texte entier, on trouve <code>19 23 38 3F 28</code> (C, y, b, e, r donnent 19, 23, 38, 3F, 28).</p>
+            <p><strong>Vérification.</strong> Applique le XOR une seconde fois : 0x19 XOR 0x5A = 0x43, soit « C ». Les cinq octets redonnent « Cyber ».</p>
+            <p><strong>Clé 00.</strong> XOR avec 0 ne change aucun bit : le texte reste intact. C'est une « clé » qui ne brouille rien.</p>
+            <p><strong>Pour réfléchir.</strong> Avec une clé d'un octet, il n'existe que 256 clés. Un analyste peut toutes les tester et regarder lesquelles donnent du texte lisible : c'est pourquoi le XOR à clé courte est de l'obfuscation et pas du chiffrement.</p>
+      </div></details>
+    </article>
+
+  </div>
+</div>
+
+<!-- ═══ MODULE 13 ═══ -->
+<div class="module" id="s13">
+  <div class="mod-head">
+    <span class="mod-tag">13</span>
+    <div><h2>Vérifier ses acquis</h2><p>Checklist, ressources et glossaire</p></div>
+  </div>
+  <div class="mod-body">
+        <p>Coche ce que tu sais expliquer avec tes propres mots. Tes cases sont gardées dans ce navigateur.</p>
+        <div class="score"><span id="cnt">0 / 10</span><div class="tr" aria-hidden="true"><i id="cbar"></i></div></div>
+        <label class="chk" for="c1"><input type="checkbox" id="c1"><span>Je convertis un octet entre décimal, binaire et hexadécimal.</span></label>
+        <label class="chk" for="c2"><input type="checkbox" id="c2"><span>Je sais pourquoi un octet vaut 0 à 255 et ce que veut dire « signé ».</span></label>
+        <label class="chk" for="c3"><input type="checkbox" id="c3"><span>J'explique ce qu'est un dépassement d'entier.</span></label>
+        <label class="chk" for="c4"><input type="checkbox" id="c4"><span>Je lis 0x41 comme la lettre A et je sais où trouver une table ASCII.</span></label>
+        <label class="chk" for="c5"><input type="checkbox" id="c5"><span>Je distingue Unicode (un numéro) et UTF-8 (une façon de l'écrire en octets).</span></label>
+        <label class="chk" for="c6"><input type="checkbox" id="c6"><span>Je distingue encodage, chiffrement et hachage.</span></label>
+        <label class="chk" for="c7"><input type="checkbox" id="c7"><span>Je reconnais du Base64 et je sais qu'il se décode sans clé.</span></label>
+        <label class="chk" for="c8"><input type="checkbox" id="c8"><span>Je sais ce que fait XOR et pourquoi il n'est pas un vrai chiffrement.</span></label>
+        <label class="chk" for="c9"><input type="checkbox" id="c9"><span>Je lis les signatures MZ, %PDF et PK dans un dump hexadécimal.</span></label>
+        <label class="chk" for="c10"><input type="checkbox" id="c10"><span>J'ai fait les six exercices.</span></label>
+        <p style="margin-top:18px">À retenir : un octet, c'est 8 bits et 256 valeurs, que l'on écrit volontiers avec deux chiffres hexadécimaux. Un texte devient des octets grâce à un encodage, UTF-8 en tête. Et encoder n'est pas chiffrer : Base64 se lit sans clé.</p>
+        <h3>Pour aller plus loin</h3>
+        <ul class="res">
+          <li><b><a href="https://gchq.github.io/CyberChef/" target="_blank" rel="noopener">CyberChef</a></b>, outil gratuit qui enchaîne décodages, XOR, hexadécimal et hash dans le navigateur.</li>
+          <li><b><a href="https://utf8everywhere.org" target="_blank" rel="noopener">UTF-8 Everywhere</a></b>, texte de référence sur les encodages (en anglais).</li>
+          <li><b><a href="https://en.wikipedia.org/wiki/List_of_file_signatures" target="_blank" rel="noopener">Liste de signatures de fichiers</a></b> (Wikipédia, en anglais).</li>
+          <li><b>Code</b> (Charles Petzold), livre qui explique comment on construit un ordinateur à partir des bits.</li>
+          <li><b><a href="https://www.nand2tetris.org" target="_blank" rel="noopener">Nand2Tetris</a></b>, cours qui part des portes logiques.</li>
+        </ul>
+        <h3>Glossaire</h3>
+        <dl class="gl">
+          <div><dt>Bit</dt><dd>Unité d'information qui vaut 0 ou 1.</dd></div>
+          <div><dt>Octet</dt><dd>Groupe de 8 bits, 256 valeurs.</dd></div>
+          <div><dt>Binaire</dt><dd>Écriture des nombres en base 2.</dd></div>
+          <div><dt>Hexadécimal</dt><dd>Écriture en base 16 : un chiffre = 4 bits.</dd></div>
+          <div><dt>Complément à deux</dt><dd>Façon de représenter les nombres négatifs sur des bits.</dd></div>
+          <div><dt>Dépassement (overflow)</dt><dd>Résultat trop grand pour la taille prévue ; la retenue est perdue.</dd></div>
+          <div><dt>ASCII</dt><dd>Table de 128 caractères numérotés de 0 à 127.</dd></div>
+          <div><dt>Unicode</dt><dd>Catalogue qui numérote les caractères de toutes les langues.</dd></div>
+          <div><dt>UTF-8</dt><dd>Encodage d'Unicode en 1 à 4 octets par caractère.</dd></div>
+          <div><dt>Base64</dt><dd>Encodage qui représente des octets avec 64 caractères de texte.</dd></div>
+          <div><dt>Hash</dt><dd>Empreinte d'un contenu, impossible à inverser directement (mais on peut tester des candidats).</dd></div>
+          <div><dt>XOR</dt><dd>Opération bit à bit : 1 si les deux bits sont différents.</dd></div>
+          <div><dt>Nombre magique</dt><dd>Octets du début d'un fichier qui indiquent souvent son format (un indice, pas une preuve).</dd></div>
+          <div><dt>Little-endian</dt><dd>Rangement où l'octet de poids faible vient en premier.</dd></div>
+        </dl>
+  </div>
+</div>
+
+<div class="roadmap-wrap">
+  <h2>🗺️ Parcours conseillé — environ 1 h 15</h2>
+  <div class="rm-item"><div class="rm-wk">15 min</div><div class="rm-info"><h4>Les bases : bits, binaire, hexadécimal</h4><p>Sections 1 à 4. Manipule le convertisseur jusqu'à ce que 0x4D = 77 devienne naturel.</p></div></div>
+  <div class="rm-item"><div class="rm-wk">10 min</div><div class="rm-info"><h4>Les limites d'un octet</h4><p>Section 5. Fais déborder l'octet et regarde la valeur signée changer.</p></div></div>
+  <div class="rm-item"><div class="rm-wk">15 min</div><div class="rm-info"><h4>Du nombre au texte</h4><p>Sections 6 et 7. Compare le texte et ses octets en ASCII, puis en UTF-8.</p></div></div>
+  <div class="rm-item"><div class="rm-wk">15 min</div><div class="rm-info"><h4>Encoder, chiffrer, hacher, brouiller</h4><p>Sections 8 à 10. Encode et décode du Base64, applique un XOR deux fois.</p></div></div>
+  <div class="rm-item"><div class="rm-wk">20 min</div><div class="rm-info"><h4>Pratique</h4><p>Section 11 puis exercices 5 et 6 dans un terminal. Termine par la checklist.</p></div></div>
+</div>
+
+<footer>
+  <b>404 CyberFound</b> · Décrypter. Comprendre. Sécuriser.<br>
+  Fiche 0.2 · Binaire, hexadécimal et encodages<br>
+  <b class="sig">0xn!n4</b>
+</footer>
+
+<script>
+(function(){
+  Array.prototype.forEach.call(document.querySelectorAll('.cb .copy'),function(btn){
+    btn.addEventListener('click',function(){
+      var pre=btn.closest('.cb').querySelector('pre'),txt=pre.innerText,done=function(){var o=btn.textContent;btn.textContent='Copié';setTimeout(function(){btn.textContent=o},1400)};
+      var fb=function(){try{var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}};
+      try{navigator.clipboard.writeText(txt).then(done,fb)}catch(e){fb()}
+    });
+  });
+  var KEY='404cf-fiche-0.2-checks',boxes=Array.prototype.slice.call(document.querySelectorAll('.chk input')),saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function upd(){var n=boxes.filter(function(b){return b.checked}).length;document.getElementById('cnt').textContent=n+' / '+boxes.length;document.getElementById('cbar').style.width=(n/boxes.length*100)+'%';}
+  boxes.forEach(function(b){if(saved[b.id])b.checked=true;b.addEventListener('change',function(){var o={};boxes.forEach(function(x){if(x.checked)o[x.id]=1});try{localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}upd()})});
+  upd();
+})();
+</script>
+<script>(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  function pad(s, n) { while (s.length < n) { s = '0' + s; } return s; }
+  function hx(b) { return pad(b.toString(16).toUpperCase(), 2); }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function bytesOf(str) { return Array.prototype.slice.call(new TextEncoder().encode(str)); }
+  function chr(v) { return (v >= 32 && v <= 126) ? String.fromCharCode(v) : (v < 128 ? '(non imprimable)' : '(hors ASCII)'); }
+
+  /* 1. Octet */
+  var bv = 77, bitBtns = [];
+  var row = $('#o-bits');
+  for (var i = 7; i >= 0; i--) {
+    (function (i) {
+      var c = document.createElement('div'); c.className = 'bitcell';
+      c.innerHTML = '<small>' + (1 << i) + '</small>';
+      var b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-pressed', 'false');
+      b.setAttribute('aria-label', 'Bit de valeur ' + (1 << i));
+      b.addEventListener('click', function () { bv = bv ^ (1 << i); orender(null); $('#o-msg').className = 'say'; $('#o-msg').textContent = 'Bit de valeur ' + (1 << i) + ' inversé. Valeur : ' + bv + '.'; });
+      c.appendChild(b); row.appendChild(c); bitBtns.push([i, b]);
+    })(i);
+  }
+  function orender(skip) {
+    bitBtns.forEach(function (p) { var on = (bv >> p[0]) & 1; p[1].textContent = on; p[1].setAttribute('aria-pressed', on ? 'true' : 'false'); });
+    if (skip !== 'dec') { $('#o-dec').value = String(bv); }
+    if (skip !== 'bin') { $('#o-bin').value = pad(bv.toString(2), 8); }
+    if (skip !== 'hex') { $('#o-hex').value = hx(bv); }
+    $('#o-uns').textContent = bv; $('#o-sig').textContent = bv > 127 ? bv - 256 : bv; $('#o-chr').textContent = chr(bv);
+  }
+  function oerr(m) { var s = $('#o-msg'); s.textContent = m; s.className = 'say warn'; }
+  function ook(m) { var s = $('#o-msg'); s.textContent = m; s.className = 'say'; }
+  $('#o-dec').addEventListener('input', function () {
+    var v = this.value.trim(); if (!/^\d{1,3}$/.test(v) || +v > 255) { oerr('Décimal : un nombre entier de 0 à 255.'); return; }
+    bv = +v; orender('dec'); ook('Valeur lue en décimal : ' + bv + '.');
+  });
+  $('#o-bin').addEventListener('input', function () {
+    var v = this.value.trim(); if (!/^[01]{1,8}$/.test(v)) { oerr('Binaire : uniquement des 0 et des 1, 8 bits au maximum.'); return; }
+    bv = parseInt(v, 2); orender('bin'); ook('Valeur lue en binaire : ' + bv + '.');
+  });
+  $('#o-hex').addEventListener('input', function () {
+    var v = this.value.trim(); if (!/^[0-9a-fA-F]{1,2}$/.test(v)) { oerr('Hexadécimal : 1 ou 2 chiffres parmi 0-9 et A-F.'); return; }
+    bv = parseInt(v, 16); orender('hex'); ook('Valeur lue en hexadécimal : ' + bv + '.');
+  });
+  orender(null);
+
+  /* 2. Grand nombre */
+  function gset(n, skip) {
+    if (skip !== 'dec') { $('#g-dec').value = n.toString(10); }
+    if (skip !== 'hex') { $('#g-hex').value = n.toString(16).toUpperCase(); }
+    if (skip !== 'bin') { $('#g-bin').value = n.toString(2); }
+    var bl = n.toString(2).length, by = Math.ceil(bl / 8);
+    var s = $('#g-msg'); s.className = 'say'; s.textContent = 'Il faut ' + bl + ' bit' + (bl > 1 ? 's' : '') + ', soit ' + by + ' octet' + (by > 1 ? 's' : '') + ' au minimum.';
+  }
+  function gbind(id, re, pre, base, label) {
+    $(id).addEventListener('input', function () {
+      var v = this.value.replace(/[\s_]/g, '').replace(pre, '');
+      var s = $('#g-msg');
+      if (v === '') { s.className = 'say'; s.textContent = 'Écris un nombre dans l\'un des champs.'; return; }
+      if (!re.test(v) || v.length > 80) { s.className = 'say warn'; s.textContent = label; return; }
+      var n = base === 10 ? BigInt(v) : BigInt((base === 16 ? '0x' : '0b') + v);
+      gset(n, id.slice(3));
+    });
+  }
+  gbind('#g-dec', /^\d+$/, /^$/, 10, 'Décimal : uniquement des chiffres de 0 à 9.');
+  gbind('#g-hex', /^[0-9a-fA-F]+$/, /^0x/i, 16, 'Hexadécimal : chiffres 0-9 et lettres A-F.');
+  gbind('#g-bin', /^[01]+$/, /^0b/i, 2, 'Binaire : uniquement des 0 et des 1.');
+  gset(BigInt(300), null);
+
+  /* 3. Dépassement */
+  var wv = 250;
+  function wrender(m, warn) {
+    $('#w-bin').textContent = pad(wv.toString(2), 8); $('#w-uns').textContent = wv; $('#w-sig').textContent = wv > 127 ? wv - 256 : wv;
+    var s = $('#w-say'); s.textContent = m; s.className = 'say' + (warn ? ' warn' : '');
+  }
+  function wadd(d) {
+    var raw = wv + d, n = ((raw % 256) + 256) % 256;
+    var msg;
+    if (raw > 255) { msg = 'Dépassement : ' + wv + ' + ' + d + ' = ' + raw + ', mais un octet ne va pas au-delà de 255. La retenue est perdue : on obtient ' + n + '.'; }
+    else if (raw < 0) { msg = 'Dépassement par le bas : ' + wv + ' − ' + (-d) + ' passe sous 0 et revient à ' + n + '.'; }
+    else if (wv <= 127 && n > 127) { msg = 'En signé, ' + n + ' est lu comme ' + (n - 256) + ' : le bit de gauche vient de passer à 1.'; }
+    else { msg = 'Valeur : ' + n + '. Continue jusqu\'à dépasser 255.'; }
+    wv = n; wrender(msg, raw > 255 || raw < 0);
+  }
+  $('#w-p1').addEventListener('click', function () { wadd(1); });
+  $('#w-m1').addEventListener('click', function () { wadd(-1); });
+  $('#w-p100').addEventListener('click', function () { wadd(100); });
+  $('#w-reset').addEventListener('click', function () { wv = 250; wrender('Remis à 250. Appuie sur « + 1 » plusieurs fois.', false); });
+
+  /* 4. ASCII */
+  function arender() {
+    var chars = Array.from($('#a-in').value), cut = chars.length > 20, h = '', bad = 0;
+    chars = chars.slice(0, 20);
+    chars.forEach(function (c) {
+      var v = c.codePointAt(0);
+      if (v < 128) { h += '<tr><td>' + (v === 32 ? '␣' : esc(c)) + '</td><td>' + v + '</td><td>' + hx(v) + '</td><td>' + pad(v.toString(2), 8) + '</td></tr>'; }
+      else { bad++; h += '<tr><td>' + esc(c) + '</td><td colspan="3">hors ASCII (voir la section 7)</td></tr>'; }
+    });
+    $('#a-out').innerHTML = h;
+    $('#a-msg').textContent = (chars.length ? chars.length + ' caractère' + (chars.length > 1 ? 's' : '') + '. ' : 'Tape un texte. ') + (bad ? bad + ' hors ASCII. ' : '') + (cut ? 'Seuls les 20 premiers sont affichés.' : '');
+  }
+  $('#a-in').addEventListener('input', arender); arender();
+
+  /* 5. UTF-8 */
+  function urender() {
+    var chars = Array.from($('#u-in').value), cut = chars.length > 12, h = '', all = [];
+    chars.forEach(function (c) { bytesOf(c).forEach(function (b) { all.push(b); }); });
+    chars.slice(0, 12).forEach(function (c) {
+      var cp = c.codePointAt(0), bs = bytesOf(c);
+      h += '<tr><td>' + esc(c) + '</td><td>U+' + pad(cp.toString(16).toUpperCase(), 4) + '</td><td>' + bs.map(hx).join(' ') + '</td><td>' + bs.length + '</td></tr>';
+    });
+    $('#u-out').innerHTML = h;
+    var wrong = '';
+    try { wrong = new TextDecoder('windows-1252').decode(new Uint8Array(all)); } catch (e) { wrong = ''; }
+    $('#u-msg').innerHTML = chars.length ? (chars.length + ' caractère' + (chars.length > 1 ? 's' : '') + ', ' + all.length + ' octet' + (all.length > 1 ? 's' : '') + '.' + (cut ? ' Seuls les 12 premiers sont détaillés.' : '') + (wrong ? '<br>Lu à tort en Windows-1252 : <b>' + esc(wrong) + '</b>' : '')) : 'Tape un texte.';
+  }
+  $('#u-in').addEventListener('input', urender); urender();
+
+  /* 6. Base64 */
+  var AL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  function toB64(bytes) { var s = ''; bytes.forEach(function (b) { s += String.fromCharCode(b); }); return btoa(s); }
+  function brender() {
+    var t = $('#b-in').value, bs = bytesOf(t);
+    $('#b-hex').textContent = bs.length ? bs.map(hx).join(' ') : '(vide)';
+    $('#b-b64').textContent = bs.length ? toB64(bs) : '(vide)';
+    $('#b-url').textContent = t.length ? encodeURIComponent(t) : '(vide)';
+    var f = bs.slice(0, 3);
+    if (!f.length) { $('#b-steps').textContent = '(vide)'; return; }
+    var bits = f.map(function (b) { return pad(b.toString(2), 8); }).join('');
+    while (bits.length % 6) { bits += '0'; }
+    var parts = bits.match(/.{6}/g), chs = parts.map(function (p) { return AL[parseInt(p, 2)]; });
+    $('#b-steps').textContent = f.map(function (b) { return pad(b.toString(2), 8); }).join(' ') + '  →  ' + parts.join(' ') + '  →  ' + parts.map(function (p) { return parseInt(p, 2); }).join(', ') + '  →  ' + chs.join('');
+  }
+  $('#b-in').addEventListener('input', brender); brender();
+  function drender() {
+    var v = $('#d-in').value.trim().replace(/-/g, '+').replace(/_/g, '/'), o = $('#d-out');
+    if (!v) { o.className = 'say'; o.textContent = 'Écris du Base64 pour le décoder.'; return; }
+    while (v.length % 4) { v += '='; }
+    try {
+      var bin = atob(v), arr = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) { arr[i] = bin.charCodeAt(i); }
+      var txt = new TextDecoder('utf-8').decode(arr);
+      o.className = 'say';
+      o.textContent = 'Décodé : ' + txt + (txt.indexOf('�') >= 0 ? '   (ces octets ne sont pas du texte UTF-8 valide : ce sont peut-être des données binaires)' : '');
+    } catch (e) { o.className = 'say warn'; o.textContent = 'Ce n\'est pas du Base64 valide : caractères A-Z, a-z, 0-9, + et / seulement.'; }
+  }
+  $('#d-in').addEventListener('input', drender); drender();
+
+  /* 7. XOR */
+  function xrender() {
+    var bs = bytesOf($('#x-in').value), kv = $('#x-key').value.trim(), m = $('#x-msg');
+    if (!/^[0-9a-fA-F]{1,2}$/.test(kv)) { m.className = 'say warn'; m.textContent = 'Clé : 1 ou 2 chiffres hexadécimaux (00 à FF).'; return; }
+    var k = parseInt(kv, 16), x = bs.map(function (b) { return b ^ k; }), y = x.map(function (b) { return b ^ k; });
+    $('#x-a').textContent = bs.length ? bs.map(hx).join(' ') : '(vide)';
+    $('#x-b').textContent = x.length ? x.map(hx).join(' ') : '(vide)';
+    var back = new TextDecoder('utf-8').decode(new Uint8Array(y));
+    $('#x-c').textContent = y.length ? y.map(hx).join(' ') + '  →  « ' + back + ' »' : '(vide)';
+    m.className = 'say';
+    m.textContent = k === 0 ? 'Avec la clé 00, rien ne change : XOR avec 0 laisse les bits intacts.' : 'Le second XOR redonne exactement le texte de départ. Il n\'y a que 256 clés possibles.';
+  }
+  $('#x-in').addEventListener('input', xrender); $('#x-key').addEventListener('input', xrender); xrender();
+})();
+</script>
+</body>
+</html>
